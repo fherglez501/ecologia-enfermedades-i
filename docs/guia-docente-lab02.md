@@ -24,17 +24,17 @@ El objetivo de la Semana 2 es **convertir datos crudos en una tabla epidemiológ
 
 Con el subconjunto incluido:
 
-- tabla cruda: **200 filas y 14 columnas**;
+- tabla cruda: **79 filas y 14 columnas**;
 - filas duplicadas exactas: **9**;
-- después de `distinct()`: **191 filas**;
-- pesos negativos iniciales: **4**;
+- después de `distinct()`: **70 filas**;
+- pesos negativos iniciales: **1**;
 - retrasos negativos reporte–inicio: **1**;
-- género `Unknown` inicial: **6**;
-- edades faltantes iniciales: **5**;
+- género `Unknown` inicial: **3**;
+- edades faltantes iniciales: **3**;
 - definición de caso después de la transformación:
-  - `Confirmed`: **154**
-  - `Suspect`: **27**
-  - `To investigate`: **10**.
+  - `Confirmed`: **58**
+  - `Suspect`: **9**
+  - `To investigate`: **3**.
 
 ## Puntos conceptuales
 
