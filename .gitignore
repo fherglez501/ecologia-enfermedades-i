@@ -1,0 +1,13 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+Thumbs.db
+
+# Productos generados por cada estudiante
+data/processed/*
+!data/processed/.gitkeep
+outputs/tables/*
+!outputs/tables/.gitkeep
+outputs/lab02_sessionInfo.txt
