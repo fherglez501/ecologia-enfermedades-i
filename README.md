@@ -39,6 +39,7 @@ Cada práctica cuenta con una presentación teórica reproducible en formato `.q
 
 ```text
 presentations/lab02/lab02-procesamiento-tablas.qmd
+presentations/muestreo/muestreo-calculos-r.qmd
 presentations/lab03/lab03-lincoln-petersen.qmd
 ```
 
@@ -62,6 +63,51 @@ quarto render presentations/lab03/lab03-lincoln-petersen.qmd
 ```
 
 Los resultados se generan en `_rendered/`, carpeta excluida del control de versiones. Consulte `presentations/README.md` para detalles del sistema visual y flujo de trabajo.
+
+---
+
+## Módulo II — Diseño de muestreo y vigilancia con R
+
+**Propósito:** convertir las decisiones metodológicas de **M2 — Diseño de Muestreo** en cálculos reproducibles de tamaño de muestra, precisión, detección imperfecta, potencia y selección probabilística de unidades.
+
+Este bloque funciona como **puente metodológico** entre la discusión conceptual de diseño de muestreo y el Laboratorio 3. No sustituye ni renumera la secuencia formal de laboratorios.
+
+Presentación complementaria:
+
+```text
+presentations/muestreo/muestreo-calculos-r.qmd
+```
+
+Script:
+
+```text
+scripts/02b_diseno-muestreo-vigilancia.R
+```
+
+Datos de escenarios:
+
+```text
+data/raw/escenarios_muestreo_bd_m2.csv
+```
+
+El script desarrolla:
+
+- cálculo manual del tamaño de muestra para detectar al menos un positivo;
+- incorporación de sensibilidad diagnóstica;
+- verificación mediante `epiR::epi.ssdetect()`;
+- tamaño de muestra basado en precisión mediante `presize::prec_prop()`;
+- prevalencia aparente y ajustada con `epiR::epi.prev()`;
+- potencia para comparar dos proporciones mediante `pwr`;
+- muestreo aleatorio simple y estratificado mediante `sampling`;
+- comparación de tres distribuciones de 150 hisopos entre 20 humedales para discutir replicación espacial y pseudorreplicación.
+
+> Idea central: calcular `n` no reemplaza definir la población objetivo, la unidad independiente, la representatividad ni el mecanismo de selección.
+
+Documentación metodológica:
+
+```text
+docs/integracion-m2-diseno-muestreo.md
+```
 
 ---
 
@@ -139,10 +185,11 @@ Quienes ya trabajaron el Laboratorio 2 **no necesitan volver a clonar** el proye
 
 1. abrir `ecologia-enfermedades-i.Rproj`;
 2. ejecutar **Git → Pull**;
-3. abrir la presentación Quarto del laboratorio;
-4. seguir el fundamento teórico;
-5. abrir `scripts/03_lab-lincoln-petersen.R`;
-6. seguir la demostración por secciones.
+3. revisar, cuando corresponda, el bloque complementario de diseño de muestreo;
+4. abrir la presentación Quarto del laboratorio;
+5. seguir el fundamento teórico;
+6. abrir `scripts/03_lab-lincoln-petersen.R`;
+7. seguir la demostración por secciones.
 
 ---
 
@@ -160,16 +207,20 @@ ecologia-enfermedades-i/
 │   │       └── esmvz.scss
 │   ├── lab02/
 │   │   └── lab02-procesamiento-tablas.qmd
+│   ├── muestreo/
+│   │   └── muestreo-calculos-r.qmd
 │   └── lab03/
 │       └── lab03-lincoln-petersen.qmd
 ├── scripts/
 │   ├── 02_lab-procesamiento-tablas-epidemiologicas.R
+│   ├── 02b_diseno-muestreo-vigilancia.R
 │   └── 03_lab-lincoln-petersen.R
 ├── data/
 │   ├── raw/
 │   │   ├── surveillance_lab02.csv
 │   │   ├── messy_site_coverage.csv
 │   │   ├── tidy_site_coverage.csv
+│   │   ├── escenarios_muestreo_bd_m2.csv
 │   │   └── escenarios_captura_recaptura_lab03.csv
 │   ├── dictionaries/
 │   │   └── linelist_datadict_es.csv
@@ -179,6 +230,7 @@ ecologia-enfermedades-i/
 │   └── figures/
 └── docs/
     ├── guia-docente-lab02.md
+    ├── integracion-m2-diseno-muestreo.md
     └── guia-docente-lab03.md
 ```
 
@@ -199,6 +251,10 @@ Los scripts verifican e instalan, cuando es necesario:
 - `janitor`
 - `lubridate`
 - `here`
+- `epiR`
+- `presize`
+- `sampling`
+- `pwr`
 
 ## Principios de reproducibilidad
 
@@ -209,6 +265,7 @@ Los scripts verifican e instalan, cuando es necesario:
 - Cada estudiante trabaja sobre su **clon local**; no necesita permisos de escritura en este repositorio.
 - Antes de cada laboratorio se recomienda ejecutar **Pull** para obtener la versión más reciente.
 - Las presentaciones se mantienen como código fuente Quarto, bajo el mismo control de versiones que los scripts.
+- El tamaño de muestra debe justificarse a partir del objetivo inferencial y no como una cifra aislada.
 
 ## Docente
 
