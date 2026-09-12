@@ -10,4 +10,6 @@ data/processed/*
 !data/processed/.gitkeep
 outputs/tables/*
 !outputs/tables/.gitkeep
-outputs/lab02_sessionInfo.txt
+outputs/figures/*
+!outputs/figures/.gitkeep
+outputs/*_sessionInfo.txt
