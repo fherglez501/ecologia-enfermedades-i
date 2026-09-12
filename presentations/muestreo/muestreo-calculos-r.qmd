@@ -1,0 +1,436 @@
+---
+title: "Diseño de muestreo con R"
+subtitle: "Tamaño de muestra, detección y selección probabilística"
+author: "José Fernando Aguilera González · MVZ, MSc."
+date: "12/09/2026"
+title-slide-attributes:
+  data-background-color: "#FFFFFF"
+---
+
+## Ruta del script
+
+<div class="brand-grid four">
+
+<div class="brand-card green">
+<div class="card-number">01</div>
+<div class="card-title">Detectar</div>
+<p>¿Cuántas muestras necesito para encontrar al menos un positivo?</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">02</div>
+<div class="card-title">Estimar</div>
+<p>¿Cuántas necesito para estimar prevalencia con precisión?</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">03</div>
+<div class="card-title">Comparar</div>
+<p>¿Cuántas necesito para detectar diferencias entre grupos?</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">04</div>
+<div class="card-title">Seleccionar</div>
+<p>Una vez definido n: ¿qué unidades entrarán realmente en la muestra?</p>
+</div>
+
+</div>
+
+---
+
+## El cálculo empieza antes que R
+
+<div class="brand-note">
+<strong>El tamaño de muestra es una consecuencia del objetivo inferencial.</strong>
+</div>
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Presencia</div>
+<p>Maximizar la probabilidad de observar ≥1 positivo.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Prevalencia</div>
+<p>Controlar la incertidumbre alrededor de una proporción.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Comparación</div>
+<p>Alcanzar potencia suficiente para identificar una diferencia.</p>
+</div>
+
+</div>
+
+No existe un único valor de **n** correcto para las tres preguntas.
+
+---
+
+## 01 · Detección de presencia {.section-slide .no-underline}
+
+<div class="section-subtitle">Del supuesto de prevalencia a una probabilidad explícita de detección.</div>
+
+---
+
+## Detectar al menos un positivo
+
+Si la prevalencia mínima de diseño es $p$ y las unidades son independientes:
+
+<div class="equation-panel">
+
+$$
+P(\text{no detectar})=(1-p)^n
+$$
+
+</div>
+
+Para una confianza deseada $NC$:
+
+<div class="equation-panel">
+
+$$
+n=\frac{\ln(1-NC)}{\ln(1-p)}
+$$
+
+</div>
+
+Con $p=0.10$ y $NC=0.95$:
+
+<div class="brand-note">
+<strong>n ≈ 29 individuos</strong>
+</div>
+
+---
+
+## La sensibilidad modifica el esfuerzo
+
+La prueba puede no detectar a todos los individuos infectados.
+
+<div class="equation-panel">
+
+$$
+P_{efectiva}\approx p\times Se
+$$
+
+</div>
+
+<div class="brand-grid two">
+
+<div class="brand-card green">
+<div class="card-title">Se = 1.00</div>
+<p>p = 0.10 → n ≈ <strong>29</strong></p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Se = 0.70</div>
+<p>p efectiva = 0.07 → n ≈ <strong>42</strong></p>
+</div>
+
+</div>
+
+<div class="brand-note">Un resultado negativo sólo es informativo en relación con el diseño y la capacidad de detección.</div>
+
+---
+
+## Del cálculo manual a `epiR`
+
+Primero hacemos visible el razonamiento:
+
+```r
+n <- ceiling(
+  log(1 - 0.95) / log(1 - 0.10 * 0.70)
+)
+# 42
+```
+
+Después usamos una función especializada:
+
+```r
+epiR::epi.ssdetect(
+  N = 1000,
+  prev = 0.10,
+  se = 0.70,
+  sp = 1.00,
+  finite.correction = FALSE,
+  conf.level = 0.95
+)
+```
+
+<div class="brand-note"><strong>Regla:</strong> el paquete automatiza el cálculo; no decide la pregunta ni valida los supuestos por nosotros.</div>
+
+---
+
+## 02 · Estimación de prevalencia {.section-slide .no-underline}
+
+<div class="section-subtitle">Detectar presencia y estimar una proporción son objetivos distintos.</div>
+
+---
+
+## Precisión: ¿qué tan estrecho debe ser el intervalo?
+
+Para estimar prevalencia podemos fijar el ancho deseado del intervalo de confianza.
+
+```r
+presize::prec_prop(
+  p = 0.10,
+  conf.width = 0.10,
+  conf.level = 0.95,
+  method = "wilson"
+)
+```
+
+<div class="brand-grid two">
+
+<div class="brand-card green">
+<div class="card-title">p esperada</div>
+<p>Valor de diseño basado en evidencia previa o escenario conservador.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Precisión</div>
+<p><code>conf.width = 0.10</code> equivale a un ancho total de 10 puntos porcentuales.</p>
+</div>
+
+</div>
+
+<div class="brand-note">Un margen de ±5% corresponde a un ancho completo del IC de 10%.</div>
+
+---
+
+## Prevalencia observada ≠ prevalencia verdadera
+
+Ejemplo: 18 positivos de 100 animales.
+
+<span class="pill">AP = 0.18</span>
+<span class="pill blue">Se = 0.90</span>
+<span class="pill">Sp = 0.95</span>
+
+<div class="equation-panel">
+
+$$
+TP=\frac{AP+Sp-1}{Se+Sp-1}
+$$
+
+</div>
+
+```r
+epiR::epi.prev(
+  pos = 18,
+  tested = 100,
+  se = 0.90,
+  sp = 0.95
+)
+```
+
+<div class="brand-note">La medición diagnóstica forma parte de la inferencia epidemiológica.</div>
+
+---
+
+## 03 · Comparar grupos {.section-slide .no-underline}
+
+<div class="section-subtitle">Cuando la pregunta cambia, también cambia el cálculo de n.</div>
+
+---
+
+## Potencia para dos proporciones
+
+Supongamos una comparación de 10% frente a 20%.
+
+```r
+h <- pwr::ES.h(0.10, 0.20)
+
+pwr::pwr.2p.test(
+  h = h,
+  n = NULL,
+  sig.level = 0.05,
+  power = 0.80,
+  alternative = "two.sided"
+)
+```
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">α</div>
+<p>Riesgo de falso positivo inferencial.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">1 − β</div>
+<p>Potencia para detectar el efecto especificado.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Efecto</div>
+<p>Diferencia biológicamente relevante entre proporciones.</p>
+</div>
+
+</div>
+
+---
+
+## 04 · Selección de unidades {.section-slide .no-underline}
+
+<div class="section-subtitle">Calcular n no determina cuáles unidades formarán la muestra.</div>
+
+---
+
+## De “¿cuántas?” a “¿cuáles?”
+
+### Aleatorio simple
+
+```r
+seleccion <- sampling::srswor(
+  n = 10,
+  N = 20
+)
+```
+
+### Estratificado
+
+```r
+sampling::strata(
+  data = marco,
+  stratanames = "estrato_id",
+  size = c(4, 3, 3),
+  method = "srswor"
+)
+```
+
+<div class="brand-note">La representatividad depende del marco accesible, del mecanismo de selección y de la escala de inferencia.</div>
+
+---
+
+## Paquetes: una herramienta para cada pregunta
+
+| Pregunta | Paquete / función | Decisión que facilita |
+|---|---|---|
+| Detectar presencia | `epiR::epi.ssdetect()` | n para detectar ≥1 evento |
+| Estimar prevalencia | `presize::prec_prop()` | n según precisión deseada |
+| Ajustar prevalencia | `epiR::epi.prev()` | AP → prevalencia ajustada |
+| Comparar proporciones | `pwr::pwr.2p.test()` | n según potencia y efecto |
+| Elegir unidades | `sampling::srswor()` / `strata()` | selección probabilística |
+| Organizar escenarios | `tidyverse` | tablas, gráficos y comparación |
+
+<div class="brand-note">El paquete correcto depende de la <strong>pregunta</strong>, no de cuál función sea más fácil de ejecutar.</div>
+
+---
+
+## Caso integrador · Bd en 20 humedales
+
+Disponemos de **150 hisopos**.
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Diseño A</div>
+<p><strong>5 sitios × 30</strong><br>Alta intensidad dentro de sitio.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Diseño B</div>
+<p><strong>10 sitios × 15</strong><br>Compromiso entre escalas.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Diseño C</div>
+<p><strong>15 sitios × 10</strong><br>Mayor replicación espacial.</p>
+</div>
+
+</div>
+
+<div class="brand-note">Los tres usan 150 hisopos; no sostienen necesariamente la misma inferencia regional.</div>
+
+---
+
+## ¿Qué cambia entre A, B y C?
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Dentro del sitio</div>
+<p>Más individuos elevan la oportunidad de detectar prevalencias bajas localmente.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Entre sitios</div>
+<p>Más humedales representan mejor heterogeneidad espacial.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Inferencia</div>
+<p>La unidad independiente debe coincidir con la afirmación final.</p>
+</div>
+
+</div>
+
+### Pregunta para defender el diseño
+
+> ¿Queremos afirmar algo sobre individuos de un humedal o sobre la ocurrencia de Bd en la región?
+
+---
+
+## Flujo recomendado
+
+<div class="brand-grid four">
+
+<div class="brand-card green">
+<div class="card-number">1</div>
+<div class="card-title">Definir</div>
+<p>Población, estimando y escala.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">2</div>
+<div class="card-title">Suponer</div>
+<p>p, Se/Sp, precisión o efecto.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">3</div>
+<div class="card-title">Calcular</div>
+<p>n y sensibilidad a escenarios.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">4</div>
+<div class="card-title">Seleccionar</div>
+<p>Unidades con un mecanismo defendible.</p>
+</div>
+
+</div>
+
+<div class="brand-note"><strong>Pregunta → supuestos → n → selección → inferencia.</strong></div>
+
+---
+
+## Script de apoyo
+
+```text
+scripts/02b_diseno-muestreo-vigilancia.R
+```
+
+El script reproduce:
+
+- cálculo manual de detección;
+- detección imperfecta;
+- escenarios de sensibilidad;
+- `epiR`, `presize` y `pwr`;
+- muestreo aleatorio simple y estratificado;
+- caso integrador de 20 humedales y 150 hisopos;
+- exportación de tablas, figura y `sessionInfo()`.
+
+<div class="brand-note">Objetivo final: que R ayude a <strong>defender decisiones metodológicas</strong>, no sólo a producir un número.</div>
+
+---
+
+## Referencias esenciales
+
+- Foufopoulos, J., Wobeser, G. A., & McCallum, H. (2022). *Infectious Disease Ecology and Conservation*. Oxford University Press. Cap. 4.
+- Fosgate, G. T. (2009). Practical sample size calculations for surveillance and diagnostic investigations. *Journal of Veterinary Diagnostic Investigation*, 21, 3–14.
+- Mosher, B. A., et al. (2017, 2019). Diseños y modelos para detección y ocurrencia de patógenos de anfibios.
+- Documentación CRAN: `epiR`, `presize`, `sampling` y `pwr`.
+
+<div class="small-source">Material complementario a M2 — Diseño de Muestreo · Ecología de Enfermedades I.</div>
