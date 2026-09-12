@@ -1,6 +1,6 @@
 # Presentaciones Quarto — Ecología de Enfermedades I
 
-Esta carpeta contiene las presentaciones teóricas que introducen cada práctica de laboratorio. El objetivo es mantener **teoría, código y datos dentro del mismo proyecto reproducible**.
+Esta carpeta contiene las presentaciones teóricas que introducen o complementan las prácticas de laboratorio. El objetivo es mantener **teoría, código y datos dentro del mismo proyecto reproducible**.
 
 ## Identidad visual
 
@@ -35,8 +35,33 @@ presentations/
 │       └── esmvz.scss
 ├── lab02/
 │   └── lab02-procesamiento-tablas.qmd
+├── muestreo/
+│   └── muestreo-calculos-r.qmd
 └── lab03/
     └── lab03-lincoln-petersen.qmd
+```
+
+### M2 — Diseño de muestreo con R
+
+La presentación complementaria:
+
+```text
+presentations/muestreo/muestreo-calculos-r.qmd
+```
+
+conecta el módulo teórico de diseño de muestreo con herramientas concretas de R para:
+
+- detección de presencia;
+- precisión de estimaciones de prevalencia;
+- ajuste por sensibilidad/especificidad;
+- potencia para comparar proporciones;
+- selección aleatoria simple y estratificada;
+- discusión de replicación espacial y pseudorreplicación mediante un escenario de Bd.
+
+Script asociado:
+
+```text
+scripts/02b_diseno-muestreo-vigilancia.R
 ```
 
 ## Renderizar desde RStudio
@@ -46,7 +71,7 @@ Abra el proyecto `ecologia-enfermedades-i.Rproj`, después abra el archivo `.qmd
 También puede renderizarse desde una terminal con Quarto:
 
 ```bash
-quarto render presentations/lab03/lab03-lincoln-petersen.qmd
+quarto render presentations/muestreo/muestreo-calculos-r.qmd
 ```
 
 Los archivos renderizados se generan en `_rendered/` y no se versionan en Git.
@@ -67,4 +92,4 @@ Abrir script R
 Demostración + ejecución por estudiantes
 ```
 
-Las presentaciones explican **por qué y qué significa** el método; los scripts muestran **cómo implementarlo y validarlo**.
+Las presentaciones explican **por qué y qué significa** el método; los scripts muestran **cómo implementarlo, explorar sus supuestos y validarlo**.
