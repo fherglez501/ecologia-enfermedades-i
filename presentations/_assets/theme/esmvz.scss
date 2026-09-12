@@ -1,0 +1,454 @@
+/*-- scss:defaults --*/
+
+// ESMVZ · Ecología de Enfermedades I
+// Tema Quarto / RevealJS derivado de la identidad visual de las presentaciones docentes.
+
+$font-family-sans-serif: "Google Sans", "Google Sans Text", "Aptos", "Segoe UI", Arial, sans-serif !default;
+$presentation-heading-font: "Google Sans", "Google Sans Text", "Aptos Display", "Segoe UI", Arial, sans-serif !default;
+$presentation-heading-font-weight: 700 !default;
+$presentation-heading-text-transform: none !default;
+$presentation-heading-letter-spacing: -0.02em !default;
+$presentation-font-size-root: 34px !default;
+
+// Paleta principal extraída de la presentación de referencia.
+$esmvz-green:       #5A6E36 !default;
+$esmvz-green-dark:  #1A3D14 !default;
+$esmvz-blue:        #123A5A !default;
+$esmvz-red:         #8A3D35 !default;
+$esmvz-red-strong:  #980000 !default;
+$esmvz-gray:        #5B5B5B !default;
+$esmvz-muted:       #7A7A7A !default;
+$esmvz-muted-green: #7A857A !default;
+$esmvz-line:        #D7DBD2 !default;
+$esmvz-green-soft:  #F0F4E9 !default;
+$esmvz-gray-soft:   #F4F5F3 !default;
+$esmvz-blue-soft:   #EAF0F5 !default;
+$esmvz-red-soft:    #F8ECEA !default;
+$esmvz-white:       #FFFFFF !default;
+
+$body-bg: $esmvz-white !default;
+$body-color: $esmvz-gray !default;
+$link-color: $esmvz-blue !default;
+$selection-bg: rgba($esmvz-green, 0.22) !default;
+$code-color: $esmvz-red-strong !default;
+$code-bg: $esmvz-gray-soft !default;
+$presentation-heading-color: $esmvz-gray !default;
+$presentation-h1-font-size: 2.05em !default;
+$presentation-h2-font-size: 1.34em !default;
+$presentation-h3-font-size: 0.92em !default;
+$presentation-h4-font-size: 0.78em !default;
+
+/*-- scss:rules --*/
+
+.reveal {
+  color: $esmvz-gray;
+  font-family: $font-family-sans-serif;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides section {
+  box-sizing: border-box;
+  padding: 0.45rem 0.65rem 0.35rem 0.65rem;
+  overflow: visible;
+}
+
+// Firma discreta del curso.
+.reveal .slides section:not(.title-slide)::before {
+  content: "Ecología de Enfermedades I";
+  position: absolute;
+  top: 0.18rem;
+  right: 0.18rem;
+  color: $esmvz-green;
+  font-size: 0.29em;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.reveal p,
+.reveal li {
+  line-height: 1.28;
+}
+
+.reveal strong { font-weight: 700; }
+.reveal em { font-style: italic; }
+
+.reveal a {
+  color: $esmvz-blue;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.12em;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: $presentation-heading-font;
+}
+
+.reveal h2 {
+  margin-bottom: 0.48em;
+  color: $esmvz-gray;
+}
+
+// Línea corta bajo títulos principales: recurso recurrente de la referencia.
+.reveal h2:not(.no-underline)::after {
+  content: "";
+  display: block;
+  width: 4.6rem;
+  height: 0.12rem;
+  margin-top: 0.22rem;
+  background: $esmvz-green;
+  border-radius: 999px;
+}
+
+.reveal h3 {
+  color: $esmvz-green-dark;
+  margin-bottom: 0.25em;
+}
+
+.kicker {
+  color: $esmvz-green;
+  font-size: 0.55em;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  margin-bottom: 0.16rem;
+}
+
+.lead {
+  color: $esmvz-muted;
+  font-size: 1.06em;
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.section-number {
+  color: $esmvz-green;
+  font-size: 1.75em;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.26rem;
+}
+
+.section-title {
+  color: $esmvz-gray;
+  font-size: 1.9em;
+  font-weight: 700;
+  line-height: 1.08;
+  margin: 0;
+}
+
+.section-subtitle {
+  color: $esmvz-muted;
+  font-size: 1.15em;
+  font-style: italic;
+  line-height: 1.25;
+  max-width: 72%;
+  margin-top: 0.85rem;
+}
+
+.reveal .slides section.section-slide {
+  padding-top: 1.25rem;
+}
+
+.reveal .slides section.section-slide::before,
+.reveal .slides section.section-slide h2::after {
+  display: none;
+}
+
+// Portada.
+.reveal .title-slide {
+  text-align: left;
+  padding: 1.15rem 0.8rem 0.7rem 0.8rem;
+}
+
+.reveal .title-slide::before {
+  content: "Ecología de Enfermedades I";
+  display: block;
+  color: $esmvz-green;
+  font-size: 0.46em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.2rem;
+}
+
+.reveal .title-slide h1 {
+  color: $esmvz-gray;
+  max-width: 80%;
+  line-height: 1.02;
+  margin-bottom: 0.35rem;
+}
+
+.reveal .title-slide .subtitle {
+  color: $esmvz-green-dark;
+  font-size: 0.88em;
+  font-weight: 700;
+  max-width: 75%;
+  line-height: 1.22;
+}
+
+.reveal .title-slide .author,
+.reveal .title-slide .date {
+  color: $esmvz-muted;
+  font-size: 0.54em;
+}
+
+// Tarjetas y paneles.
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.62rem;
+  width: 100%;
+}
+
+.brand-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.brand-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.brand-card {
+  background: $esmvz-white;
+  border: 0.045rem solid $esmvz-line;
+  border-radius: 0.42rem;
+  padding: 0.58rem 0.62rem;
+  min-height: 4.1rem;
+  box-shadow: none;
+}
+
+.brand-card.green {
+  border-color: $esmvz-green;
+  background: $esmvz-green-soft;
+}
+
+.brand-card.blue {
+  border-color: $esmvz-blue;
+  background: $esmvz-blue-soft;
+}
+
+.brand-card.red {
+  border-color: $esmvz-red;
+  background: $esmvz-red-soft;
+}
+
+.brand-card.white-green {
+  border-color: $esmvz-green;
+  background: $esmvz-white;
+}
+
+.brand-card > :first-child { margin-top: 0; }
+.brand-card > :last-child { margin-bottom: 0; }
+
+.brand-card .card-number {
+  color: $esmvz-green;
+  font-size: 0.86em;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+.brand-card .card-title {
+  color: $esmvz-green-dark;
+  font-size: 0.77em;
+  font-weight: 700;
+  margin-bottom: 0.22rem;
+}
+
+.brand-card.blue .card-title,
+.brand-card.blue .card-number { color: $esmvz-blue; }
+
+.brand-card.red .card-title,
+.brand-card.red .card-number { color: $esmvz-red; }
+
+.brand-card p,
+.brand-card li { font-size: 0.63em; }
+
+.brand-note {
+  background: $esmvz-green-soft;
+  border: 0.045rem solid $esmvz-green;
+  border-radius: 0.36rem;
+  padding: 0.48rem 0.62rem;
+  margin-top: 0.6rem;
+  font-size: 0.73em;
+}
+
+.brand-note.blue {
+  background: $esmvz-blue-soft;
+  border-color: $esmvz-blue;
+}
+
+.brand-note.red {
+  background: $esmvz-red-soft;
+  border-color: $esmvz-red;
+}
+
+.brand-note.dashed { border-style: dashed; }
+.brand-note strong { color: $esmvz-green-dark; }
+.brand-note.blue strong { color: $esmvz-blue; }
+.brand-note.red strong { color: $esmvz-red-strong; }
+
+.pill {
+  display: inline-block;
+  padding: 0.12rem 0.34rem;
+  margin: 0.06rem 0.08rem 0.06rem 0;
+  border: 0.035rem solid $esmvz-green;
+  border-radius: 999px;
+  background: $esmvz-green-soft;
+  color: $esmvz-green;
+  font-size: 0.47em;
+  font-weight: 700;
+}
+
+.pill.blue {
+  border-color: $esmvz-blue;
+  background: $esmvz-blue-soft;
+  color: $esmvz-blue;
+}
+
+.pill.red {
+  border-color: $esmvz-red;
+  background: $esmvz-red-soft;
+  color: $esmvz-red;
+}
+
+// Ecuaciones y comparación.
+.equation-panel {
+  background: $esmvz-gray-soft;
+  border-left: 0.16rem solid $esmvz-green;
+  padding: 0.55rem 0.7rem;
+  margin: 0.45rem 0;
+}
+
+.equation-panel .math.display { font-size: 1.18em; }
+
+.big-number {
+  color: $esmvz-green-dark;
+  font-size: 1.7em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.compare-a { color: $esmvz-red; font-weight: 700; }
+.compare-b { color: $esmvz-green; font-weight: 700; }
+.science-blue { color: $esmvz-blue; }
+
+// Código y salida.
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  border-radius: 0.28rem;
+  border: 0.04rem solid $esmvz-line;
+  background: $esmvz-gray-soft;
+  font-size: 0.52em;
+}
+
+.reveal pre code {
+  max-height: 470px;
+  line-height: 1.25;
+}
+
+.reveal code:not(pre code) {
+  color: $esmvz-red-strong;
+  background: $esmvz-gray-soft;
+  border-radius: 0.14rem;
+  padding: 0.02rem 0.12rem;
+}
+
+.cell-output,
+.cell-output-display {
+  border-left: 0.12rem solid $esmvz-blue;
+  padding-left: 0.45rem;
+}
+
+// Tablas: alternancia verde/azul inspirada en las tablas del material de referencia.
+.reveal table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.55em;
+  color: $esmvz-gray;
+}
+
+.reveal table th {
+  background: $esmvz-green;
+  color: $esmvz-white;
+  font-weight: 700;
+  border: 0;
+  padding: 0.32rem 0.35rem;
+}
+
+.reveal table th:nth-child(even) { background: $esmvz-blue; }
+
+.reveal table td {
+  padding: 0.3rem 0.35rem;
+  border-bottom: 0.03rem solid $esmvz-line;
+  background: $esmvz-white;
+}
+
+.reveal table tbody tr:nth-child(even) td { background: $esmvz-gray-soft; }
+
+// Listas, citas y fuentes.
+.reveal ul,
+.reveal ol { margin-left: 1.05em; }
+
+.reveal li::marker {
+  color: $esmvz-green;
+  font-weight: 700;
+}
+
+.reveal blockquote {
+  width: auto;
+  margin: 0.55rem 0;
+  padding: 0.45rem 0.65rem;
+  border-left: 0.14rem solid $esmvz-green;
+  background: $esmvz-green-soft;
+  color: $esmvz-gray;
+  box-shadow: none;
+  font-style: italic;
+}
+
+.source,
+.sources,
+.small-source {
+  color: $esmvz-muted-green;
+  font-size: 0.37em;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.small-muted {
+  color: $esmvz-muted;
+  font-size: 0.52em;
+}
+
+.columns { gap: 0.65rem; }
+.column > :first-child { margin-top: 0; }
+.center { text-align: center; }
+.right { text-align: right; }
+.no-underline::after { display: none !important; }
+
+// Navegación RevealJS.
+.reveal .slide-number {
+  color: $esmvz-muted;
+  background: transparent;
+  font-size: 0.34em;
+  right: 0.42rem;
+  bottom: 0.28rem;
+}
+
+.reveal .progress {
+  height: 0.12rem;
+  color: $esmvz-green;
+}
+
+.reveal .controls { color: $esmvz-green; }
+
+// Utilidades para contenido denso.
+.reveal .smaller { font-size: 0.86em; }
+.reveal .smallest { font-size: 0.74em; }
+
+.reveal .compact p,
+.reveal .compact li {
+  line-height: 1.12;
+  margin-top: 0.16em;
+  margin-bottom: 0.16em;
+}
