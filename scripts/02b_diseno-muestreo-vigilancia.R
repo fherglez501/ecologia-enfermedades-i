@@ -1,4 +1,4 @@
-# ============================================================================== 
+# ==============================================================================
 # Ecología de Enfermedades I
 # Script 02b — Diseño de muestreo y vigilancia epidemiológica
 # Módulo II | Diseño de muestreo
@@ -16,37 +16,17 @@
 # Un n grande no corrige por sí mismo sesgo, pseudorreplicación ni mala selección.
 #
 # Docente: MVZ, MSc. José Fernando Aguilera González
-# ============================================================================== 
+# ==============================================================================
 
 
 # 00. Preparación --------------------------------------------------------------
-
+# IMPORTANTE:
 # Abra siempre "ecologia-enfermedades-i.Rproj".
 # No utilice setwd(): el proyecto usa rutas relativas con here().
+#
+# El script maestro instala/actualiza y carga las dependencias del curso.
 
-paquetes <- c(
-  "tidyverse",
-  "here",
-  "epiR",
-  "presize",
-  "sampling",
-  "pwr"
-)
-
-faltantes <- paquetes[!paquetes %in% rownames(installed.packages())]
-
-if (length(faltantes) > 0) {
-  install.packages(faltantes)
-}
-
-library(tidyverse)
-library(here)
-library(epiR)
-library(presize)
-library(sampling)
-library(pwr)
-
-cat("Raíz del proyecto:\n", here(), "\n")
+source(here::here("scripts", "00_library.R"))
 
 
 # 01. Escenarios de diseño -----------------------------------------------------
@@ -78,19 +58,7 @@ escenarios
 
 # 02. Detectar presencia: cálculo transparente --------------------------------
 
-# Pregunta:
-# ¿Cuántos individuos debo muestrear para tener una confianza dada de detectar
-# al menos un positivo si el patógeno está presente a una prevalencia mínima p?
-#
-# Supuestos iniciales:
-# - unidades independientes;
-# - prevalencia homogénea;
-# - selección compatible con la inferencia;
-# - detección perfecta (por ahora).
-#
 # P(no detectar) = (1 - p)^n
-#
-# Si deseamos confianza NC:
 # n = ln(1 - NC) / ln(1 - p)
 
 prev_diseno <- 0.10
@@ -104,7 +72,6 @@ n_manual <- ceiling(
 n_manual
 # Resultado esperado: 29 individuos.
 
-# ¿Qué pasa si sólo muestreamos 10 individuos?
 n_hipotetico <- 10
 
 prob_no_detectar <- (1 - prev_diseno)^n_hipotetico
@@ -116,7 +83,6 @@ prob_detectar
 
 # 03. Función reusable: prevalencia + sensibilidad -----------------------------
 
-# Una prueba imperfecta reduce la probabilidad efectiva de observar un positivo.
 # Aproximación didáctica:
 # P(positivo observado) ≈ prevalencia de diseño × sensibilidad.
 
@@ -157,24 +123,8 @@ n_deteccion <- function(
   as.integer(n)
 }
 
-# Detección perfecta
-n_deteccion(
-  prev = 0.10,
-  sensibilidad = 1.00,
-  confianza = 0.95
-)
-# 29
-
-# Detección imperfecta
-n_deteccion(
-  prev = 0.10,
-  sensibilidad = 0.70,
-  confianza = 0.95
-)
-# 42
-
-# El mensaje metodológico es más importante que memorizar 29 o 42:
-# esos números sólo son válidos bajo los supuestos utilizados.
+n_deteccion(0.10, 1.00, 0.95) # 29
+n_deteccion(0.10, 0.70, 0.95) # 42
 
 
 # 04. Explorar múltiples escenarios -------------------------------------------
@@ -187,10 +137,8 @@ escenarios_resultados <- escenarios %>%
       sensibilidad = sensibilidad,
       confianza = confianza
     ),
-    prob_no_detectar_si_n10 =
-      (1 - p_efectiva)^10,
-    prob_detectar_si_n10 =
-      1 - prob_no_detectar_si_n10
+    prob_no_detectar_si_n10 = (1 - p_efectiva)^10,
+    prob_detectar_si_n10 = 1 - prob_no_detectar_si_n10
   ) %>%
   arrange(
     prevalencia_diseno,
@@ -199,19 +147,8 @@ escenarios_resultados <- escenarios %>%
 
 escenarios_resultados
 
-# Observe:
-# - menor prevalencia de diseño -> mayor n;
-# - menor sensibilidad -> mayor n;
-# - un único "n correcto" no existe sin especificar los supuestos.
-
 
 # 05. Verificación con epiR ----------------------------------------------------
-
-# epiR permite formalizar el cálculo de vigilancia para detectar al menos un
-# evento y considerar sensibilidad de la prueba y corrección por población finita.
-#
-# En la versión actual de epiR, la prevalencia de diseño se especifica con
-# el argumento prev.
 
 # A) Aproximación binomial: sin corrección por población finita.
 epi_sin_fpc <- epiR::epi.ssdetect(
@@ -228,7 +165,7 @@ epi_sin_fpc <- epiR::epi.ssdetect(
 
 epi_sin_fpc
 
-# B) Misma pregunta, pero reconociendo que la población accesible es finita.
+# B) Misma pregunta, con corrección por población finita.
 epi_con_fpc <- epiR::epi.ssdetect(
   N = 1000,
   prev = 0.10,
@@ -243,18 +180,11 @@ epi_con_fpc <- epiR::epi.ssdetect(
 
 epi_con_fpc
 
-# Pregunta de interpretación:
-# ¿Por qué el tamaño de la población puede importar cuando N no es muy grande?
-
 
 # 06. Estimar prevalencia: precisión deseada ----------------------------------
 
-# Detectar presencia y estimar prevalencia NO son el mismo objetivo.
-# Para estimar una proporción necesitamos decidir cuánta incertidumbre aceptamos.
-#
 # presize::prec_prop() utiliza el ANCHO COMPLETO del intervalo de confianza.
-# Por ejemplo, un margen de error de ±5 puntos porcentuales equivale a un ancho
-# total de 0.10.
+# Un margen de error de ±5 puntos porcentuales equivale a un ancho de 0.10.
 
 prev_esperada <- 0.10
 margen_error <- 0.05
@@ -269,7 +199,6 @@ precision_prev <- presize::prec_prop(
 
 precision_prev
 
-# Compare otros supuestos:
 precision_05 <- presize::prec_prop(
   p = 0.05,
   conf.width = 0.10,
@@ -287,16 +216,8 @@ precision_20 <- presize::prec_prop(
 precision_05
 precision_20
 
-# Pregunta:
-# ¿Por qué el n para ESTIMAR con precisión puede ser muy distinto del n para
-# DETECTAR al menos un positivo?
-
 
 # 07. Prevalencia aparente y prevalencia ajustada ------------------------------
-
-# Ejemplo didáctico de la sesión:
-# 18 positivos de 100 examinados.
-# Sensibilidad = 0.90; especificidad = 0.95.
 
 positivos <- 18
 examinados <- 100
@@ -305,7 +226,6 @@ Sp <- 0.95
 
 prev_aparente <- positivos / examinados
 
-# Corrección de Rogan–Gladen:
 prev_ajustada_manual <-
   (prev_aparente + Sp - 1) /
   (Se + Sp - 1)
@@ -313,7 +233,6 @@ prev_ajustada_manual <-
 prev_aparente
 prev_ajustada_manual
 
-# Verificación con epiR, incluyendo incertidumbre:
 prev_epi <- epiR::epi.prev(
   pos = positivos,
   tested = examinados,
@@ -326,16 +245,8 @@ prev_epi <- epiR::epi.prev(
 
 prev_epi
 
-# Discusión:
-# Una prevalencia observada no es automáticamente la prevalencia verdadera.
-# La interpretación depende del desempeño diagnóstico.
-
 
 # 08. Comparar dos grupos: tamaño de muestra y potencia ------------------------
-
-# Supongamos que queremos comparar una prevalencia de 10% frente a 20%.
-# Aquí cambia la pregunta: ya no buscamos sólo detectar ni estimar una proporción,
-# sino identificar una diferencia entre dos grupos.
 
 p1 <- 0.10
 p2 <- 0.20
@@ -361,14 +272,8 @@ n_por_grupo <- ceiling(
 
 n_por_grupo
 
-# Este n es POR GRUPO y responde a una pregunta diferente.
-# No debe sustituir los cálculos de vigilancia o precisión.
-
 
 # 09. "¿Cuántas?" no responde "¿cuáles?" --------------------------------------
-
-# Construimos un marco ficticio de 20 humedales para practicar selección.
-# Los nombres son didácticos: no representan localidades reales.
 
 marco_humedales <- tibble(
   site_id = sprintf("H%02d", 1:20),
@@ -399,6 +304,7 @@ marco_humedales <- tibble(
 
 marco_humedales
 
+
 # 09.1 Muestreo aleatorio simple ----------------------------------------------
 
 set.seed(20260912)
@@ -416,7 +322,6 @@ muestra_srs <- marco_humedales[indicador_srs == 1, ] %>%
 
 muestra_srs
 
-# Revise qué estratos quedaron representados por azar.
 muestra_srs %>%
   count(
     estrato_id,
@@ -426,9 +331,6 @@ muestra_srs %>%
 
 
 # 09.2 Muestreo estratificado -------------------------------------------------
-
-# Garantizamos representación mínima de los tres tipos de hábitat.
-# El vector size corresponde a los estratos 1, 2 y 3.
 
 marco_ordenado <- marco_humedales %>%
   arrange(
@@ -462,15 +364,8 @@ muestra_estratificada %>%
     name = "sitios"
   )
 
-# Pregunta:
-# ¿Cuál de los dos diseños representa mejor el gradiente ambiental propuesto?
-# La respuesta depende de la pregunta inferencial y del marco de muestreo.
-
 
 # 10. Caso integrador: Bd, 20 humedales y 150 hisopos -------------------------
-
-# Tres formas de distribuir el mismo esfuerzo total.
-# Mismo número de hisopos no significa la misma inferencia regional.
 
 disenos_bd <- tribble(
   ~diseno, ~sitios, ~individuos_por_sitio,
@@ -489,17 +384,6 @@ disenos_bd <- tribble(
   )
 
 disenos_bd
-
-# Bajo el supuesto simplificador IID, los tres diseños tienen el mismo número
-# total de hisopos y una probabilidad total de detección muy similar.
-# Sin embargo, NO tienen la misma replicación espacial ni la misma capacidad
-# para describir heterogeneidad entre humedales.
-#
-# Preguntas para defender el diseño:
-# 1. ¿La unidad primaria es el humedal o el individuo?
-# 2. ¿Se busca presencia regional o prevalencia dentro de sitio?
-# 3. ¿Qué variación espacial debe quedar representada?
-# 4. ¿Qué se pierde al concentrar 150 hisopos en pocos sitios?
 
 
 # 11. Visualizar cómo cambian los requerimientos -------------------------------
@@ -553,38 +437,22 @@ dir.create(
 
 write_csv(
   escenarios_resultados,
-  here(
-    "outputs",
-    "tables",
-    "m2_escenarios_deteccion.csv"
-  )
+  here("outputs", "tables", "m2_escenarios_deteccion.csv")
 )
 
 write_csv(
   muestra_srs,
-  here(
-    "outputs",
-    "tables",
-    "m2_muestra_aleatoria_simple.csv"
-  )
+  here("outputs", "tables", "m2_muestra_aleatoria_simple.csv")
 )
 
 write_csv(
   muestra_estratificada,
-  here(
-    "outputs",
-    "tables",
-    "m2_muestra_estratificada.csv"
-  )
+  here("outputs", "tables", "m2_muestra_estratificada.csv")
 )
 
 write_csv(
   disenos_bd,
-  here(
-    "outputs",
-    "tables",
-    "m2_comparacion_diseno_bd.csv"
-  )
+  here("outputs", "tables", "m2_comparacion_diseno_bd.csv")
 )
 
 ggsave(
@@ -601,10 +469,7 @@ ggsave(
 
 capture.output(
   sessionInfo(),
-  file = here(
-    "outputs",
-    "m2_sessionInfo.txt"
-  )
+  file = here("outputs", "m2_sessionInfo.txt")
 )
 
 
@@ -644,8 +509,6 @@ list.files(
 # Fosgate, G. T. (2009). Practical sample size calculations for surveillance and
 #   diagnostic investigations. Journal of Veterinary Diagnostic Investigation,
 #   21, 3–14.
-# Mosher, B. A., et al. (2017, 2019). Diseño, detección y modelos de ocupación
-#   aplicados a patógenos de anfibios.
 #
 # Documentación de funciones:
 # ?epiR::epi.ssdetect
