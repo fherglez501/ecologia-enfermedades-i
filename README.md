@@ -2,11 +2,9 @@
 
 Repositorio docente de la asignatura **Ecología de Enfermedades I** de la Licenciatura en Administración de la Fauna Silvestre.
 
-## Laboratorio 2 — Procesamiento de tablas epidemiológicas
+## Clonar el proyecto en RStudio
 
-**Objetivo:** convertir datos crudos en una tabla epidemiológica ordenada y auditable mediante importación, inspección, limpieza, transformación, filtrado, agrupación y resumen descriptivo con R.
-
-### Clonar en RStudio
+Si es la primera vez que utilizarás el repositorio:
 
 1. Abrir **RStudio**.
 2. Ir a **File → New Project → Version Control → Git**.
@@ -16,17 +14,89 @@ Repositorio docente de la asignatura **Ecología de Enfermedades I** de la Licen
 https://github.com/fherglez501/ecologia-enfermedades-i.git
 ```
 
-4. Elegir la carpeta donde se guardará el proyecto.
+4. Elegir la carpeta local.
 5. Pulsar **Create Project**.
-6. Abrir:
+
+> No es necesario usar `setwd()`. El proyecto utiliza rutas relativas mediante `here()`.
+
+## Si ya clonaste el repositorio
+
+Antes de cada nuevo laboratorio, actualiza tu copia local:
+
+```text
+Git → Pull
+```
+
+En RStudio también puedes usar el botón **Pull** del panel Git.
+
+---
+
+## Laboratorio 2 — Procesamiento de tablas epidemiológicas
+
+**Fecha:** 07/09/2026  
+**Objetivo:** convertir datos crudos en una tabla epidemiológica ordenada y auditable mediante importación, inspección, limpieza, transformación, filtrado, agrupación y resumen descriptivo con R.
+
+Script:
 
 ```text
 scripts/02_lab-procesamiento-tablas-epidemiologicas.R
 ```
 
-7. Ejecutar el script **por secciones** mientras se desarrolla la demostración.
+Evidencia principal:
 
-> No es necesario usar `setwd()`. El proyecto utiliza rutas relativas mediante `here()`.
+- base depurada;
+- auditoría de calidad;
+- resumen descriptivo por grupos;
+- registro de `sessionInfo()`.
+
+---
+
+## Laboratorio 3 — Estimador Lincoln–Petersen
+
+**Fecha:** 14/09/2026  
+**Tema:** estimación del tamaño poblacional, corrección de Chapman e intervalos de confianza.
+
+**Objetivo:** programar y validar estimaciones de abundancia para poblaciones cerradas.
+
+Durante la práctica se desarrollará:
+
+- cálculo manual de Lincoln–Petersen;
+- corrección de Chapman;
+- varianza y error estándar;
+- intervalo de confianza aproximado;
+- construcción de una función parametrizada en R;
+- validación del cálculo;
+- comparación de escenarios con distinto número de recapturas;
+- revisión de los supuestos ecológicos del modelo.
+
+Script:
+
+```text
+scripts/03_lab-lincoln-petersen.R
+```
+
+Datos:
+
+```text
+data/raw/escenarios_captura_recaptura_lab03.csv
+```
+
+Guía docente:
+
+```text
+docs/guia-docente-lab03.md
+```
+
+### Secuencia de actualización para estudiantes
+
+Quienes ya trabajaron el Laboratorio 2 **no necesitan volver a clonar** el proyecto:
+
+1. abrir `ecologia-enfermedades-i.Rproj`;
+2. ejecutar **Git → Pull**;
+3. abrir `scripts/03_lab-lincoln-petersen.R`;
+4. seguir la demostración por secciones.
+
+---
 
 ## Estructura actual
 
@@ -35,67 +105,42 @@ ecologia-enfermedades-i/
 ├── ecologia-enfermedades-i.Rproj
 ├── README.md
 ├── scripts/
-│   └── 02_lab-procesamiento-tablas-epidemiologicas.R
+│   ├── 02_lab-procesamiento-tablas-epidemiologicas.R
+│   └── 03_lab-lincoln-petersen.R
 ├── data/
 │   ├── raw/
 │   │   ├── surveillance_lab02.csv
 │   │   ├── messy_site_coverage.csv
-│   │   └── tidy_site_coverage.csv
+│   │   ├── tidy_site_coverage.csv
+│   │   └── escenarios_captura_recaptura_lab03.csv
 │   ├── dictionaries/
 │   │   └── linelist_datadict_es.csv
 │   └── processed/
 ├── outputs/
-│   └── tables/
+│   ├── tables/
+│   └── figures/
 └── docs/
-    └── guia-docente-lab02.md
+    ├── guia-docente-lab02.md
+    └── guia-docente-lab03.md
 ```
 
-## Paquetes
+## Paquetes utilizados hasta ahora
 
-El script verifica e instala, si es necesario:
+Los scripts verifican e instalan, cuando es necesario:
 
 - `tidyverse`
 - `janitor`
 - `lubridate`
 - `here`
 
-## Flujo de trabajo
+## Principios de reproducibilidad
 
-```text
-datos crudos
-   ↓
-importar
-   ↓
-inspeccionar y auditar
-   ↓
-limpiar
-   ↓
-transformar
-   ↓
-filtrar
-   ↓
-agrupar y resumir
-   ↓
-exportar
-```
-
-## Reglas de trabajo
-
-- `data/raw/` se considera **inmutable** durante la práctica.
+- `data/raw/` se considera **inmutable** durante las prácticas.
 - Los productos derivados se guardan en `data/processed/` y `outputs/`.
 - No corregir anomalías silenciosamente: identificarlas y documentarlas.
 - No usar rutas absolutas.
 - Cada estudiante trabaja sobre su **clon local**; no necesita permisos de escritura en este repositorio.
-
-## Evidencia del Laboratorio 2
-
-Al finalizar, cada estudiante debe contar al menos con:
-
-1. el script ejecutado y comentado;
-2. una base depurada;
-3. una tabla de auditoría;
-4. un resumen descriptivo por grupos;
-5. `sessionInfo()` como registro de reproducibilidad.
+- Antes de cada laboratorio se recomienda ejecutar **Pull** para obtener la versión más reciente.
 
 ## Docente
 
