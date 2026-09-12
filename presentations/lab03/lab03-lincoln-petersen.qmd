@@ -1,0 +1,397 @@
+---
+title: "Laboratorio 3"
+subtitle: "Estimación de abundancia mediante captura–recaptura"
+author: "José Fernando Aguilera González · MVZ, MSc."
+date: "14/09/2026"
+title-slide-attributes:
+  data-background-color: "#FFFFFF"
+---
+
+## Ruta de la práctica
+
+<div class="brand-grid four">
+
+<div class="brand-card green">
+<div class="card-number">01</div>
+<div class="card-title">Problema</div>
+<p>Inferir el tamaño de una población que no podemos contar por completo.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">02</div>
+<div class="card-title">Estimador</div>
+<p>Derivar Lincoln–Petersen y comprender qué representa.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">03</div>
+<div class="card-title">Incertidumbre</div>
+<p>Aplicar Chapman, varianza e intervalo de confianza.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">04</div>
+<div class="card-title">Programación</div>
+<p>Convertir el procedimiento en una función validada en R.</p>
+</div>
+
+</div>
+
+---
+
+## 01 · El problema ecológico {.section-slide .no-underline}
+
+<div class="section-subtitle">La abundancia es una propiedad de la población; la captura sólo observa una fracción.</div>
+
+---
+
+## ¿Cómo estimar una población que no podemos censar?
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Primera ocasión</div>
+<p>Capturamos, marcamos y liberamos individuos.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Mezcla</div>
+<p>Los marcados vuelven a integrarse a la población.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Segunda ocasión</div>
+<p>Capturamos nuevamente y contamos cuántos están marcados.</p>
+</div>
+
+</div>
+
+<div class="brand-note">La información clave no es sólo cuántos capturamos, sino <strong>qué proporción de la segunda muestra ya estaba marcada</strong>.</div>
+
+---
+
+## Notación mínima: M, C y R
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="big-number">M</div>
+<div class="card-title">Marcados</div>
+<p>Individuos marcados y liberados en la primera ocasión.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="big-number science-blue">C</div>
+<div class="card-title">Capturados</div>
+<p>Total de individuos capturados en la segunda ocasión.</p>
+</div>
+
+<div class="brand-card green">
+<div class="big-number">R</div>
+<div class="card-title">Recapturados</div>
+<p>Individuos de la segunda muestra que conservan la marca.</p>
+</div>
+
+</div>
+
+---
+
+## La idea proporcional
+
+Si la segunda muestra es representativa de la población, la fracción de individuos marcados en esa muestra aproxima la fracción marcada en toda la población.
+
+<div class="equation-panel">
+
+$$
+\frac{R}{C} \approx \frac{M}{N}
+$$
+
+</div>
+
+Despejando el tamaño poblacional:
+
+<div class="equation-panel">
+
+$$
+\hat{N}_{LP}=\frac{M\,C}{R}
+$$
+
+</div>
+
+---
+
+## Un ejemplo de cálculo
+
+Supongamos:
+
+<span class="pill">M = 50</span>
+<span class="pill blue">C = 60</span>
+<span class="pill">R = 15</span>
+
+<div class="equation-panel">
+
+$$
+\hat{N}_{LP}=\frac{50\times 60}{15}=200
+$$
+
+</div>
+
+<div class="brand-note">Interpretación: bajo los supuestos del modelo, estimamos una población de aproximadamente <strong>200 individuos</strong>.</div>
+
+---
+
+## 02 · Sesgo e incertidumbre {.section-slide .no-underline}
+
+<div class="section-subtitle">Una estimación puntual no describe por sí sola cuánto sabemos sobre la población.</div>
+
+---
+
+## ¿Por qué usar la corrección de Chapman?
+
+El estimador de Lincoln–Petersen puede presentar sesgo cuando el número de recapturas es pequeño.
+
+<div class="equation-panel">
+
+$$
+\hat{N}_{Chapman}=\frac{(M+1)(C+1)}{R+1}-1
+$$
+
+</div>
+
+Para el mismo escenario:
+
+$$
+\hat{N}_{Chapman}=\frac{(50+1)(60+1)}{15+1}-1\approx 193.44
+$$
+
+<div class="brand-note">Chapman no “corrige todos los problemas” del diseño; reduce el sesgo del estimador bajo el mismo conjunto de supuestos.</div>
+
+---
+
+## La incertidumbre también debe estimarse
+
+Una aproximación habitual para la varianza de Chapman es:
+
+<div class="equation-panel">
+
+$$
+\operatorname{Var}(\hat{N})=
+\frac{(M+1)(C+1)(M-R)(C-R)}{(R+1)^2(R+2)}
+$$
+
+</div>
+
+Luego:
+
+$$
+SE=\sqrt{\operatorname{Var}(\hat{N})}
+$$
+
+$$
+IC_{95\%}\approx \hat{N}_{Chapman}\pm 1.96\,SE
+$$
+
+<div class="small-source">En aplicaciones reales, la elección del intervalo debe considerar tamaño de muestra, comportamiento del estimador y estructura del estudio.</div>
+
+---
+
+## Pocas recapturas = mucha incertidumbre
+
+::: columns
+::: {.column width="48%"}
+### Escenario A
+
+<span class="pill">M = 50</span>
+<span class="pill blue">C = 60</span>
+<span class="pill">R = 15</span>
+
+Recapturas relativamente frecuentes.
+
+<div class="compare-b">Estimación más estable.</div>
+:::
+
+::: {.column width="48%"}
+### Escenario B
+
+<span class="pill">M = 50</span>
+<span class="pill blue">C = 60</span>
+<span class="pill red">R = 3</span>
+
+Muy pocos marcados reaparecen.
+
+<div class="compare-a">Estimación grande e imprecisa.</div>
+:::
+:::
+
+<div class="brand-note red">Cuando <strong>R disminuye</strong>, el denominador se vuelve pequeño y la estimación responde de forma muy sensible a cada recaptura.</div>
+
+---
+
+## Sensibilidad del estimador a R
+
+Manteniendo M y C constantes:
+
+| R | Lincoln–Petersen |
+|---:|---:|
+| 20 | 150 |
+| 15 | 200 |
+| 10 | 300 |
+| 5  | 600 |
+| 2  | 1500 |
+
+<div class="brand-note">El cálculo puede ser matemáticamente válido y, al mismo tiempo, poco informativo si el diseño produce muy pocas recapturas.</div>
+
+---
+
+## 03 · Supuestos del modelo {.section-slide .no-underline}
+
+<div class="section-subtitle">La ecuación es sencilla; la validez de la inferencia depende de que el proceso biológico sea compatible con sus supuestos.</div>
+
+---
+
+## Cuatro supuestos fundamentales
+
+<div class="brand-grid four">
+
+<div class="brand-card green">
+<div class="card-number">01</div>
+<div class="card-title">Población cerrada</div>
+<p>Sin nacimientos, muertes, inmigración o emigración relevantes entre ocasiones.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">02</div>
+<div class="card-title">Marcas persistentes</div>
+<p>La marca no se pierde y se reconoce correctamente.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">03</div>
+<div class="card-title">Capturabilidad comparable</div>
+<p>Los individuos tienen probabilidades de captura suficientemente semejantes.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">04</div>
+<div class="card-title">Marca neutral</div>
+<p>Marcar no modifica supervivencia ni probabilidad de recaptura.</p>
+</div>
+
+</div>
+
+---
+
+## ¿Qué ocurre si un supuesto falla?
+
+| Violación | Consecuencia potencial |
+|---|---|
+| Marcados evitan las trampas | R disminuye → N puede sobreestimarse |
+| Marcados son atraídos a las trampas | R aumenta → N puede subestimarse |
+| Emigración de marcados | R disminuye → apariencia de una población mayor |
+| Pérdida de marcas | recapturados se cuentan como no marcados |
+| Mortalidad asociada al marcado | altera la fracción marcada disponible |
+
+<div class="brand-note red">La dirección del sesgo depende del mecanismo. Antes de “corregir” una cifra debemos identificar qué proceso generó la violación.</div>
+
+---
+
+## La escala temporal define qué significa “cerrada”
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Horas / días</div>
+<p>Puede ser razonable para algunas poblaciones y métodos.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Semanas</div>
+<p>Aumenta el riesgo de movimiento, mortalidad o reclutamiento.</p>
+</div>
+
+<div class="brand-card red">
+<div class="card-title">Meses</div>
+<p>La hipótesis de cierre suele requerir una justificación mucho más fuerte.</p>
+</div>
+
+</div>
+
+<div class="brand-note">“Población cerrada” no significa inmóvil: significa que los cambios entre ocasiones son despreciables para la inferencia propuesta.</div>
+
+---
+
+## 04 · Del estimador a una función en R {.section-slide .no-underline}
+
+<div class="section-subtitle">Programar el método obliga a declarar entradas, validar restricciones y definir exactamente qué resultados devuelve.</div>
+
+---
+
+## Diseñar la función antes de escribirla
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Entradas</div>
+<p><code>M</code>, <code>C</code>, <code>R</code>, nivel de confianza.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Validaciones</div>
+<p>R &gt; 0, valores no negativos y R ≤ min(M, C).</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Salidas</div>
+<p>LP, Chapman, varianza, SE e intervalo.</p>
+</div>
+
+</div>
+
+```r
+estimador_lp <- function(M, C, R, nivel = 0.95) {
+  # validar entradas
+  # calcular estimadores
+  # calcular incertidumbre
+  # devolver resultados
+}
+```
+
+---
+
+## Validar es comparar resultados independientes
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-number">1</div>
+<div class="card-title">Cálculo manual</div>
+<p>Resolver el escenario A paso por paso.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">2</div>
+<div class="card-title">Función</div>
+<p>Ejecutar exactamente los mismos M, C y R.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">3</div>
+<div class="card-title">Contraste</div>
+<p>Verificar que ambos resultados coincidan dentro de la precisión numérica.</p>
+</div>
+
+</div>
+
+<div class="brand-note dashed"><strong>Programar no reemplaza comprender el modelo.</strong> La validación conecta la fórmula, el código y la interpretación biológica.</div>
+
+---
+
+## Del fundamento al laboratorio {.no-underline}
+
+<div class="kicker">Ahora en RStudio</div>
+
+# `scripts/03_lab-lincoln-petersen.R`
+
+<div class="brand-note blue">Construiremos el estimador paso a paso, lo convertiremos en una función, compararemos escenarios y evaluaremos su sensibilidad a las recapturas.</div>
+
+<div class="small-source">Métodos clásicos de captura–recaptura de dos ocasiones: Lincoln–Petersen y corrección de Chapman.</div>
