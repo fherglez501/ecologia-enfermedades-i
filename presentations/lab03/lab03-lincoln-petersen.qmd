@@ -390,7 +390,7 @@ estimador_lp <- function(M, C, R, nivel = 0.95) {
 
 <div class="kicker">Ahora en RStudio</div>
 
-# `scripts/03_lab-lincoln-petersen.R`
+<div class="section-title"><code>scripts/03_lab-lincoln-petersen.R</code></div>
 
 <div class="brand-note blue">Construiremos el estimador paso a paso, lo convertiremos en una función, compararemos escenarios y evaluaremos su sensibilidad a las recapturas.</div>
 
