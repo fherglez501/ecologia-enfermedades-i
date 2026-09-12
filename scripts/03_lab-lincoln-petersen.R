@@ -16,19 +16,13 @@
 
 
 # 00. Preparacion --------------------------------------------------------------
+# IMPORTANTE:
+# Abra siempre "ecologia-enfermedades-i.Rproj".
+# No utilice setwd(): el proyecto usa rutas relativas con here().
+#
+# El script maestro instala/actualiza y carga las dependencias del curso.
 
-paquetes <- c("tidyverse", "here")
-
-faltantes <- paquetes[!paquetes %in% rownames(installed.packages())]
-
-if (length(faltantes) > 0) {
-  install.packages(faltantes)
-}
-
-library(tidyverse)
-library(here)
-
-cat("\nRaiz del proyecto:\n", here(), "\n\n")
+source(here::here("scripts", "00_library.R"))
 
 
 # 01. Cargar escenarios --------------------------------------------------------
@@ -294,9 +288,6 @@ grafico_estimaciones
 
 # 11. Sensibilidad al numero de recapturas ------------------------------------
 
-# Mantendremos M y C constantes y modificaremos R.
-# Observe como cambia la estimacion cuando aumenta la cantidad de recapturas.
-
 sensibilidad <- tibble(
   M = 50,
   C = 60,
@@ -321,9 +312,6 @@ sensibilidad %>%
   ) +
   theme_minimal(base_size = 12)
 
-# PREGUNTA:
-# ¿Por que pocas recapturas producen estimaciones grandes y poco precisas?
-
 
 # 12. Supuestos del modelo -----------------------------------------------------
 
@@ -341,11 +329,7 @@ supuestos
 
 # 13. Mini-casos de diagnostico ------------------------------------------------
 
-# Caso problematico 1: ninguna recaptura.
-# Descomente para observar la validacion de la funcion.
 # estimador_lp(M = 50, C = 60, R = 0)
-
-# Caso problematico 2: R biologicamente imposible.
 # estimador_lp(M = 20, C = 15, R = 18)
 
 
@@ -361,9 +345,7 @@ supuestos
 
 # ACTIVIDAD B
 # Cree un escenario propio modificando M, C y R.
-# Ejemplo:
 # mi_resultado <- estimador_lp(M = 70, C = 65, R = 18)
-# mi_resultado
 
 # ACTIVIDAD C
 # Mantenga M y C constantes y reduzca R a la mitad.
