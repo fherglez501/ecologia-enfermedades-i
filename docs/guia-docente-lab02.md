@@ -8,17 +8,27 @@ Desarrollar el flujo:
 
 El objetivo de la Semana 2 es **convertir datos crudos en una tabla epidemiológica ordenada y auditable**.
 
+## Material de inicio
+
+Presentación teórica:
+
+```text
+presentations/lab02/lab02-procesamiento-tablas.qmd
+```
+
+La presentación introduce datos ordenados, auditoría, faltantes, duplicados, tipos de datos, verbos de `dplyr` y reproducibilidad antes de pasar al script.
+
 ## Secuencia sugerida para la demostración
 
 | Tiempo | Actividad |
 |---:|---|
 | 10 min | Clonar el repositorio y abrir `.Rproj` |
+| 20 min | Presentación Quarto: estructura, auditoría y principios de transformación |
 | 10 min | Comparar datos desordenados vs. ordenados |
 | 15 min | Importar e inspeccionar `surveillance_lab02.csv` |
-| 30 min | Limpieza y transformación con `dplyr` |
+| 25 min | Limpieza y transformación con `dplyr` |
 | 15 min | Auditoría de duplicados, faltantes y anomalías |
-| 20 min | `group_by()` + `summarise()` |
-| 10 min | Exportar evidencia y revisar `sessionInfo()` |
+| 15 min | `group_by()` + `summarise()` y exportación de evidencia |
 
 ## Checkpoints docentes
 
