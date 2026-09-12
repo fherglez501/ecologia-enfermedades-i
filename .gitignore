@@ -5,6 +5,12 @@
 .DS_Store
 Thumbs.db
 
+# Artefactos locales de Quarto
+.quarto/
+_rendered/
+_freeze/
+*_files/
+
 # Productos generados por cada estudiante
 data/processed/*
 !data/processed/.gitkeep
