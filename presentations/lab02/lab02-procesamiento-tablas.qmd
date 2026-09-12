@@ -1,0 +1,337 @@
+---
+title: "Laboratorio 2"
+subtitle: "Procesamiento de tablas epidemiológicas"
+author: "José Fernando Aguilera González · MVZ, MSc."
+date: "07/09/2026"
+title-slide-attributes:
+  data-background-color: "#FFFFFF"
+---
+
+## Ruta de la práctica
+
+<div class="brand-grid four">
+
+<div class="brand-card green">
+<div class="card-number">01</div>
+<div class="card-title">Estructura</div>
+<p>Reconocer qué hace que una tabla sea ordenada y analizable.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">02</div>
+<div class="card-title">Auditoría</div>
+<p>Detectar faltantes, duplicados, tipos incorrectos y valores imposibles.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">03</div>
+<div class="card-title">Transformación</div>
+<p>Aplicar verbos de <code>dplyr</code> sin destruir el dato crudo.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">04</div>
+<div class="card-title">Evidencia</div>
+<p>Generar una base depurada, resúmenes y trazabilidad reproducible.</p>
+</div>
+
+</div>
+
+<div class="brand-note">La práctica no busca “dejar bonita” una tabla: busca construir una <strong>base epidemiológica auditable</strong>.</div>
+
+---
+
+## 01 · De datos crudos a evidencia {.section-slide .no-underline}
+
+<div class="section-subtitle">La inferencia comienza antes del análisis estadístico: comienza en la estructura del dato.</div>
+
+---
+
+## Las tres reglas de datos ordenados
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-number">1</div>
+<div class="card-title">Variable</div>
+<p>Cada variable ocupa una columna.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-number">2</div>
+<div class="card-title">Observación</div>
+<p>Cada observación ocupa una fila.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-number">3</div>
+<div class="card-title">Valor</div>
+<p>Cada celda contiene un único valor.</p>
+</div>
+
+</div>
+
+<div class="brand-note dashed">Una tabla puede verse ordenada visualmente y aun así ser difícil de analizar si mezcla niveles de observación o codifica información en encabezados.</div>
+
+---
+
+## ¿Cuál tabla es más defendible?
+
+::: columns
+::: {.column width="48%"}
+### Tabla desordenada
+
+- encabezados con significado múltiple;
+- observaciones repartidas entre columnas;
+- categorías implícitas;
+- transformación manual frecuente.
+:::
+
+::: {.column width="48%"}
+### Tabla ordenada
+
+- nombres de variables explícitos;
+- una unidad de observación por fila;
+- categorías como valores;
+- operaciones reproducibles con código.
+:::
+:::
+
+<div class="brand-note"><strong>Pregunta guía:</strong> ¿qué representa exactamente una fila?</div>
+
+---
+
+## 02 · Auditar antes de limpiar {.section-slide .no-underline}
+
+<div class="section-subtitle">Antes de modificar una base, describimos su estado inicial y conservamos el dato crudo.</div>
+
+---
+
+## Auditoría mínima de una tabla epidemiológica
+
+<div class="brand-grid four">
+
+<div class="brand-card green">
+<div class="card-title">Dimensiones</div>
+<p>¿Cuántas filas y columnas existen?</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Llaves</div>
+<p>¿Los identificadores son únicos?</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Faltantes</div>
+<p>¿Dónde hay <code>NA</code>, vacíos o “Unknown”?</p>
+</div>
+
+<div class="brand-card red">
+<div class="card-title">Anomalías</div>
+<p>¿Hay valores imposibles o fechas incoherentes?</p>
+</div>
+
+</div>
+
+```r
+nrow(surv_raw)
+ncol(surv_raw)
+n_distinct(surv_raw$case_id)
+sum(duplicated(surv_raw))
+```
+
+---
+
+## Faltante, cero y desconocido no significan lo mismo
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">NA</div>
+<p>Información ausente o no disponible.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">0</div>
+<p>Valor observado con significado cuantitativo.</p>
+</div>
+
+<div class="brand-card red">
+<div class="card-title">Unknown</div>
+<p>Categoría explícita que debe decidirse si se conserva o se recodifica.</p>
+</div>
+
+</div>
+
+<div class="brand-note red">Convertir silenciosamente un faltante en cero puede cambiar la interpretación epidemiológica.</div>
+
+---
+
+## Duplicados: la pregunta no es sólo “¿se repite?”
+
+::: columns
+::: {.column width="48%"}
+### Duplicado exacto
+
+Dos filas son idénticas en todas las variables.
+
+```r
+surv %>% distinct()
+```
+:::
+
+::: {.column width="48%"}
+### ID repetido
+
+El mismo individuo/caso aparece más de una vez, pero puede representar visitas, muestras o errores.
+
+```r
+surv %>% count(case_id) %>% filter(n > 1)
+```
+:::
+:::
+
+<div class="brand-note"><strong>Regla:</strong> <code>distinct()</code> y “eliminar IDs repetidos” no son operaciones equivalentes.</div>
+
+---
+
+## 03 · Transformar con intención {.section-slide .no-underline}
+
+<div class="section-subtitle">Cada transformación debe responder a una decisión explícita y dejar rastro de su justificación.</div>
+
+---
+
+## Verbos esenciales de dplyr
+
+<div class="brand-grid three">
+
+<div class="brand-card green"><div class="card-title">select()</div><p>Elegir variables relevantes.</p></div>
+<div class="brand-card blue"><div class="card-title">filter()</div><p>Elegir observaciones.</p></div>
+<div class="brand-card green"><div class="card-title">mutate()</div><p>Crear o transformar variables.</p></div>
+<div class="brand-card blue"><div class="card-title">arrange()</div><p>Ordenar para inspeccionar.</p></div>
+<div class="brand-card green"><div class="card-title">group_by()</div><p>Definir estratos de resumen.</p></div>
+<div class="brand-card blue"><div class="card-title">summarise()</div><p>Calcular indicadores por grupo.</p></div>
+
+</div>
+
+---
+
+## Transformar tipos también transforma posibilidades
+
+::: columns
+::: {.column width="48%"}
+### Antes
+
+```text
+"09/07/2014"
+"23"
+"Unknown"
+```
+
+R puede interpretarlos como texto.
+:::
+
+::: {.column width="48%"}
+### Después
+
+```r
+mutate(
+  date_onset = mdy(date_onset),
+  age = as.numeric(age),
+  gender = na_if(gender, "Unknown")
+)
+```
+
+Ahora pueden calcularse intervalos, edades y faltantes.
+:::
+:::
+
+---
+
+## Crear variables derivadas exige documentar supuestos
+
+<div class="equation-panel">
+
+Ejemplo: convertir meses a años
+
+$$
+\text{edad\_años} = \frac{\text{edad\_meses}}{12}
+$$
+
+</div>
+
+```r
+mutate(
+  age_years = case_when(
+    age_unit == "months" ~ age / 12,
+    age_unit == "years"  ~ age,
+    TRUE ~ NA_real_
+  )
+)
+```
+
+<div class="brand-note">La transformación matemática puede ser simple; la decisión sobre qué hacer cuando falta la unidad <strong>no lo es</strong>.</div>
+
+---
+
+## 04 · Resumir sin perder la estructura {.section-slide .no-underline}
+
+<div class="section-subtitle">Agrupar cambia la escala de la pregunta: de registros individuales a patrones epidemiológicos.</div>
+
+---
+
+## De registros a indicadores
+
+```r
+surv_clean %>%
+  group_by(gender) %>%
+  summarise(
+    n = n(),
+    confirmados = sum(lab_confirmed, na.rm = TRUE),
+    edad_mediana = median(age_years, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+<div class="brand-grid three">
+<div class="brand-card green"><div class="card-title">n</div><p>¿Cuántas observaciones aporta cada grupo?</p></div>
+<div class="brand-card blue"><div class="card-title">evento</div><p>¿Cuántos casos o positivos existen?</p></div>
+<div class="brand-card green"><div class="card-title">distribución</div><p>¿Qué medidas describen mejor edad, tiempo o carga?</p></div>
+</div>
+
+---
+
+## Reproducibilidad = datos + código + decisiones
+
+<div class="brand-grid three">
+
+<div class="brand-card green">
+<div class="card-title">Dato crudo</div>
+<p>Se conserva sin modificaciones.</p>
+</div>
+
+<div class="brand-card blue">
+<div class="card-title">Script</div>
+<p>Documenta cada transformación.</p>
+</div>
+
+<div class="brand-card green">
+<div class="card-title">Salida</div>
+<p>Se genera nuevamente a partir del código.</p>
+</div>
+
+</div>
+
+<div class="brand-note dashed"><strong>Auditable</strong> significa que otra persona puede reconstruir cómo pasamos del dato original al resultado.</div>
+
+---
+
+## Del fundamento al laboratorio {.no-underline}
+
+<div class="kicker">Ahora en RStudio</div>
+
+# `scripts/02_lab-procesamiento-tablas-epidemiologicas.R`
+
+<div class="brand-note blue">Ejecutaremos el flujo: <strong>importar → auditar → limpiar → transformar → filtrar → agrupar → resumir → exportar</strong>.</div>
+
+<div class="small-source">Marco conceptual: tidy data, flujo reproducible de análisis y principios de calidad de datos epidemiológicos.</div>
