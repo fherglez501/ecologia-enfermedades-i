@@ -330,7 +330,7 @@ surv_clean %>%
 
 <div class="kicker">Ahora en RStudio</div>
 
-# `scripts/02_lab-procesamiento-tablas-epidemiologicas.R`
+<div class="section-title"><code>scripts/02_lab-procesamiento-tablas-epidemiologicas.R</code></div>
 
 <div class="brand-note blue">Ejecutaremos el flujo: <strong>importar → auditar → limpiar → transformar → filtrar → agrupar → resumir → exportar</strong>.</div>
 
