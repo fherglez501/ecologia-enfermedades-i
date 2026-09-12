@@ -17,22 +17,31 @@ Programar y validar estimaciones de abundancia para poblaciones cerradas utiliza
 - validación de una función parametrizada;
 - interpretación de los supuestos biológicos del modelo.
 
+## Material de inicio
+
+Antes de abrir el script, proyectar la presentación Quarto:
+
+```text
+presentations/lab03/lab03-lincoln-petersen.qmd
+```
+
+La presentación introduce la lógica M–C–R, la derivación proporcional, Chapman, incertidumbre, sensibilidad a las recapturas y supuestos ecológicos. El objetivo es que el código aparezca después como formalización de un procedimiento ya comprendido.
+
 ## Secuencia sugerida (110 min)
 
 | Tiempo | Actividad |
 |---:|---|
-| 10 min | `Git Pull` y revisión de la estructura del repositorio |
-| 15 min | Concepto M–C–R y derivación manual de Lincoln–Petersen |
-| 15 min | Corrección de Chapman y comparación con LP |
-| 15 min | Varianza, error estándar e intervalo de confianza |
+| 5 min | `Git Pull`, abrir `.Rproj` y comprobar archivos nuevos |
+| 25 min | Presentación Quarto: fundamento de captura–recaptura, M–C–R, LP, Chapman e incertidumbre |
+| 15 min | Cálculo manual con el escenario A y contraste LP vs. Chapman |
 | 25 min | Construcción paso a paso de `estimador_lp()` |
-| 15 min | Validación de la función con varios escenarios |
-| 10 min | Sensibilidad al número de recapturas |
-| 5 min | Supuestos, interpretación y cierre |
+| 15 min | Validación con varios escenarios e interpretación del intervalo |
+| 15 min | Sensibilidad a `R`, supuestos y mecanismos de sesgo |
+| 10 min | Exportar evidencia, `sessionInfo()` y pregunta de salida |
 
 ## Mensaje pedagógico central
 
-La sesión no busca únicamente obtener un número. La competencia clave es comprender que una estimación de abundancia es válida solamente cuando el cálculo y los supuestos ecológicos son coherentes.
+La sesión no busca únicamente obtener un número. La competencia clave es comprender que una estimación de abundancia es válida solamente cuando el cálculo, la incertidumbre y los supuestos ecológicos son coherentes.
 
 ## Checkpoints de resultados
 
@@ -89,6 +98,18 @@ Este escenario es especialmente útil para mostrar que pocas recapturas producen
 - Si `R > min(M, C)`, la función identifica un escenario imposible.
 - El límite inferior del IC aproximado se trunca en cero porque una abundancia negativa carece de interpretación biológica.
 - El IC implementado es una aproximación normal basada en la varianza de Chapman; debe explicarse como una aproximación didáctica, no como un procedimiento universal para todo diseño de captura–recaptura.
+
+## Transición presentación → script
+
+Al finalizar la presentación, evitar repetir toda la teoría. Usar una transición breve:
+
+> Ya definimos qué significan M, C y R y qué supuestos sostienen la inferencia. Ahora convertiremos ese procedimiento en una función que valide las entradas, calcule la estimación y haga explícita su incertidumbre.
+
+Abrir:
+
+```text
+scripts/03_lab-lincoln-petersen.R
+```
 
 ## Evidencia mínima
 
