@@ -1,7 +1,7 @@
 Version: 1.0
 
-RestoreWorkspace: No
-SaveWorkspace: No
+RestoreWorkspace: Yes
+SaveWorkspace: Yes
 AlwaysSaveHistory: No
 
 EnableCodeIndexing: Yes
@@ -11,3 +11,7 @@ Encoding: UTF-8
 
 RnwWeave: knitr
 LaTeX: pdfLaTeX
+
+ZoteroLibraries: "My Library"
+
+SpellingDictionary: es_ES
