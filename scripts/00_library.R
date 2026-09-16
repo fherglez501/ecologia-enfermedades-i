@@ -1,4 +1,5 @@
-# ==============================================================================
+# Acerca de --------------------------------------------------------------------
+
 # Ecología de Enfermedades I
 # 00_library.R — Gestión centralizada de paquetes
 #
@@ -10,8 +11,6 @@
 #
 # IMPORTANTE:
 # Este archivo debe actualizarse cuando una práctica incorpore un paquete nuevo.
-# ==============================================================================
-
 
 # 00. Gestores de paquetes -----------------------------------------------------
 
@@ -25,7 +24,6 @@ if (!requireNamespace("pak", quietly = TRUE)) {
 if (!requireNamespace("pacman", quietly = TRUE)) {
   install.packages("pacman")
 }
-
 
 # 01. Paquetes utilizados en el curso -----------------------------------------
 
@@ -41,7 +39,6 @@ paquetes <- c(
   "scales"      # escalas y etiquetas para gráficos
 )
 
-
 # 02. Instalar o actualizar ----------------------------------------------------
 
 # upgrade = TRUE solicita a pak mantener actualizados tanto los paquetes
@@ -54,13 +51,11 @@ pak::pak(
   ask = FALSE
 )
 
-
 # 03. Cargar paquetes ----------------------------------------------------------
 
 pacman::p_load(
   char = paquetes
 )
-
 
 # 04. Comprobación -------------------------------------------------------------
 
