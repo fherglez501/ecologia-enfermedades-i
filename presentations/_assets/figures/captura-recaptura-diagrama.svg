@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Técnica de captura-recaptura</title>
+  <desc id="desc">Esquema en español de dos muestras superpuestas para ilustrar la técnica de captura-recaptura: primera captura, segunda captura y recapturados, con colores vivos y sin transparencia.</desc>
+
+  <defs>
+    <style>
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 42px; font-weight: 700; fill: #173813; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 24px; fill: #4E4E4E; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 36px; font-weight: 700; fill: #173813; }
+      .label-blue { font-family: Arial, Helvetica, sans-serif; font-size: 36px; font-weight: 700; fill: #0F4C81; }
+      .label-red { font-family: Arial, Helvetica, sans-serif; font-size: 36px; font-weight: 700; fill: #B22222; }
+      .text { font-family: Arial, Helvetica, sans-serif; font-size: 31px; font-weight: 600; fill: #1F1F1F; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 600; fill: #5B5B5B; }
+      .small-red { font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; fill: #B22222; }
+      .note { font-family: Arial, Helvetica, sans-serif; font-size: 26px; fill: #4E4E4E; }
+      .m-circle { fill: #BFD98D; stroke: #5A8A1F; stroke-width: 6; }
+      .c-circle { fill: #8EC5FF; stroke: #0F4C81; stroke-width: 6; }
+      .intersection { fill: #FFB37A; }
+    </style>
+    <clipPath id="clipLeft">
+      <circle cx="450" cy="340" r="190"></circle>
+    </clipPath>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="700" fill="#FFFFFF"></rect>
+
+  <text x="600" y="70" text-anchor="middle" class="title">Técnica de captura-recaptura</text>
+  <text x="600" y="110" text-anchor="middle" class="subtitle">Representación conceptual de dos ocasiones de muestreo</text>
+
+  <text x="82" y="165" class="label" font-style="italic">N</text>
+  <text x="110" y="165" class="small">Población total</text>
+
+  <circle cx="450" cy="340" r="190" class="m-circle"></circle>
+  <circle cx="730" cy="340" r="190" class="c-circle"></circle>
+
+  <g clip-path="url(#clipLeft)">
+    <circle cx="730" cy="340" r="190" class="intersection"></circle>
+  </g>
+
+  <text x="450" y="195" text-anchor="middle" class="label">M</text>
+  <text x="730" y="195" text-anchor="middle" class="label-blue">C</text>
+  <text x="590" y="333" text-anchor="middle" class="label-red">R</text>
+
+  <text x="390" y="325" text-anchor="middle" class="text">Primera</text>
+  <text x="390" y="365" text-anchor="middle" class="text">captura</text>
+
+  <text x="790" y="325" text-anchor="middle" class="text">Segunda</text>
+  <text x="790" y="365" text-anchor="middle" class="text">captura</text>
+
+  <text x="590" y="382" text-anchor="middle" class="small-red">Recapturados</text>
+
+  <line x1="220" y1="560" x2="980" y2="560" stroke="#C5CEC0" stroke-width="3"></line>
+  <text x="600" y="615" text-anchor="middle" class="note">La intersección representa a los individuos observados en ambas ocasiones.</text>
+</svg>
