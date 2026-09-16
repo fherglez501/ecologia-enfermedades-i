@@ -19,3 +19,5 @@ outputs/tables/*
 outputs/figures/*
 !outputs/figures/.gitkeep
 outputs/*_sessionInfo.txt
+
+/.quarto/
