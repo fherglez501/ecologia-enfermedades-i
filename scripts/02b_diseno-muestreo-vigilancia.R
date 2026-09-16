@@ -1,4 +1,5 @@
-# ==============================================================================
+# Acerca de -------------------------------------------------------------------------
+
 # Ecología de Enfermedades I
 # Script 02b — Diseño de muestreo y vigilancia epidemiológica
 # Módulo II | Diseño de muestreo
@@ -16,8 +17,6 @@
 # Un n grande no corrige por sí mismo sesgo, pseudorreplicación ni mala selección.
 #
 # Docente: MVZ, MSc. José Fernando Aguilera González
-# ==============================================================================
-
 
 # 00. Preparación --------------------------------------------------------------
 # IMPORTANTE:
