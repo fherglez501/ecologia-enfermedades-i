@@ -1,353 +1,591 @@
 ---
-title: "Laboratorio 3"
-subtitle: "Estimación de abundancia mediante captura–recaptura"
-author: "José Fernando Aguilera González · MVZ, MSc."
+title: "Estimación de abundancia mediante captura–recaptura"
+subtitle: "Ecología de Enfermedades"
+author: "MVZ, MSc José Fernando Aguilera González"
 date: "14/09/2026"
-title-slide-attributes:
-  data-background-color: "#FFFFFF"
+date-format: medium
+lang: es
+
+format:
+  revealjs:
+    width: 1600
+    height: 900
+    margin: 0.04
+
+    center: false
+
+    slide-number: c/t
+    progress: true
+    controls: true
+
+    transition: fade
+    background-transition: fade
+
+    code-line-numbers: true
+    code-overflow: scroll
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 ## Ruta de la práctica
 
-<div class="brand-grid four">
+::::::::::::::: {.brand-grid .four}
+::::: {.brand-card .green}
+::: card-number
+01
+:::
 
-<div class="brand-card green">
-<div class="card-number">01</div>
-<div class="card-title">Problema</div>
-<p>Inferir el tamaño de una población que no podemos contar por completo.</p>
-</div>
+::: card-title
+Problema
+:::
 
-<div class="brand-card blue">
-<div class="card-number">02</div>
-<div class="card-title">Estimador</div>
+<p>Inferir el tamaño de una población que no podemos contar por
+completo.</p>
+:::::
+
+::::: {.brand-card .blue}
+::: card-number
+02
+:::
+
+::: card-title
+Estimador
+:::
+
 <p>Derivar Lincoln–Petersen y comprender qué representa.</p>
-</div>
+:::::
 
-<div class="brand-card green">
-<div class="card-number">03</div>
-<div class="card-title">Incertidumbre</div>
+::::: {.brand-card .green}
+::: card-number
+03
+:::
+
+::: card-title
+Incertidumbre
+:::
+
 <p>Aplicar Chapman, varianza e intervalo de confianza.</p>
-</div>
+:::::
 
-<div class="brand-card blue">
-<div class="card-number">04</div>
-<div class="card-title">Programación</div>
+::::: {.brand-card .blue}
+::: card-number
+04
+:::
+
+::: card-title
+Programación
+:::
+
 <p>Convertir el procedimiento en una función validada en R.</p>
-</div>
+:::::
+:::::::::::::::
 
-</div>
+------------------------------------------------------------------------
 
----
+## El problema ecológico {.section-slide .no-underline}
 
-## 01 · El problema ecológico {.section-slide .no-underline}
+::: section-subtitle
+La **abundancia** es una **propiedad** de la **población**; la
+**captura** sólo observa una **fracción**.
+:::
 
-<div class="section-subtitle">La abundancia es una propiedad de la población; la captura sólo observa una fracción.</div>
-
----
+------------------------------------------------------------------------
 
 ## ¿Cómo estimar una población que no podemos censar?
 
-<div class="brand-grid three">
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+Primera ocasión
+:::
 
-<div class="brand-card green">
-<div class="card-title">Primera ocasión</div>
 <p>Capturamos, marcamos y liberamos individuos.</p>
-</div>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">Mezcla</div>
+:::: {.brand-card .blue}
+::: card-title
+Mezcla
+:::
+
 <p>Los marcados vuelven a integrarse a la población.</p>
-</div>
+::::
 
-<div class="brand-card green">
-<div class="card-title">Segunda ocasión</div>
+:::: {.brand-card .green}
+::: card-title
+Segunda ocasión
+:::
+
 <p>Capturamos nuevamente y contamos cuántos están marcados.</p>
-</div>
+::::
+:::::::::
 
-</div>
+::: brand-note
+La información clave no es sólo cuántos capturamos, sino <strong>qué
+proporción de la segunda muestra ya estaba marcada</strong>.
+:::
 
-<div class="brand-note">La información clave no es sólo cuántos capturamos, sino <strong>qué proporción de la segunda muestra ya estaba marcada</strong>.</div>
-
----
+------------------------------------------------------------------------
 
 ## Notación mínima: M, C y R
 
-<div class="brand-grid three">
+:::::::::::: {.brand-grid .three}
+::::: {.brand-card .green}
+::: big-number
+Marcados
+:::
 
-<div class="brand-card green">
-<div class="big-number">M</div>
-<div class="card-title">Marcados</div>
-<p>Individuos marcados y liberados en la primera ocasión.</p>
+::: card-title
+:::
+
+<p>Individuos marcados y liberados en la **primera ocasión**.</p>
+:::::
+
+::::: {.brand-card .blue}
+::: {.big-number .science-blue}
+Capturados
+:::
+
+::: card-title
+:::
+
+<p>Total de individuos capturados en la **segunda ocasión**.</p>
+:::::
+
+::::: {.brand-card .green}
+::: big-number
+Recapturados
+:::
+
+::: card-title
+:::
+
+<p>Individuos de la segunda muestra que **conservan la marca**.</p>
+:::::
+::::::::::::
+
+<div style="text-align:center; margin-top: 0.6rem;">
+  <img
+    src="../_assets/figures/MCR.png"
+    alt=""
+    style="width:100%; max-width:1200px;">
 </div>
 
-<div class="brand-card blue">
-<div class="big-number science-blue">C</div>
-<div class="card-title">Capturados</div>
-<p>Total de individuos capturados en la segunda ocasión.</p>
+------------------------------------------------------------------------
+
+## Esquema
+
+<div style="text-align:center; margin-top: 0.1rem;">
+  <img
+    src="../_assets/figures/captura-recaptura-diagrama.svg"
+    alt="Esquema de dos muestras de captura-recaptura con la intersección correspondiente a los individuos recapturados."
+    style="width:90%; max-width:1000px;">
 </div>
 
-<div class="brand-card green">
-<div class="big-number">R</div>
-<div class="card-title">Recapturados</div>
-<p>Individuos de la segunda muestra que conservan la marca.</p>
-</div>
-
-</div>
-
----
+------------------------------------------------------------------------
 
 ## La idea proporcional
 
-Si la segunda muestra es representativa de la población, la fracción de individuos marcados en esa muestra aproxima la fracción marcada en toda la población.
+Si la **segunda muestra** es **representativa** de la población, la **fracción de individuos marcados** en esa muestra aproxima la **fracción marcada en toda la población**.
 
-<div class="equation-panel">
+::: columns
+
+::: {.column width="48%"}
+
+### Proporción observada
+
+::: equation-panel
 
 $$
 \frac{R}{C} \approx \frac{M}{N}
 $$
 
-</div>
+:::
 
-Despejando el tamaño poblacional:
+La proporción de **recapturados** (R) en la **segunda muestra** (C) representa aproximadamente la proporción de individuos **marcados** (M) en toda la **población** (N).
 
-<div class="equation-panel">
+:::
+
+::: {.column width="48%"}
+
+### Estimador resultante
+
+::: equation-panel
 
 $$
 \hat{N}_{LP}=\frac{M\,C}{R}
 $$
 
-</div>
+:::
 
----
+A partir de la proporción observada obtenemos el estimador de **Lincoln–Petersen** para el tamaño de la población.
+
+:::
+
+:::
+------------------------------------------------------------------------
 
 ## Un ejemplo de cálculo
 
 Supongamos:
 
-<span class="pill">M = 50</span>
-<span class="pill blue">C = 60</span>
-<span class="pill">R = 15</span>
+[M = 50]{.pill} [C = 60]{.pill .blue} [R = 15]{.pill}
 
-<div class="equation-panel">
+::: equation-panel
 
-$$
-\hat{N}_{LP}=\frac{50\times 60}{15}=200
-$$
+$$\hat{N}_{LP}=\frac{50\times 60}{15}=200$$
+:::
 
-</div>
+::: brand-note
+Interpretación: bajo los supuestos del modelo, estimamos una población
+de aproximadamente <strong>200 individuos</strong>.
+:::
 
-<div class="brand-note">Interpretación: bajo los supuestos del modelo, estimamos una población de aproximadamente <strong>200 individuos</strong>.</div>
+------------------------------------------------------------------------
 
----
+## Sesgo e incertidumbre {.section-slide .no-underline}
 
-## 02 · Sesgo e incertidumbre {.section-slide .no-underline}
+::: section-subtitle
+Una estimación puntual no describe por sí sola cuánto sabemos sobre la
+población.
+:::
 
-<div class="section-subtitle">Una estimación puntual no describe por sí sola cuánto sabemos sobre la población.</div>
-
----
+------------------------------------------------------------------------
 
 ## ¿Por qué usar la corrección de Chapman?
 
-El estimador de Lincoln–Petersen puede presentar sesgo cuando el número de recapturas es pequeño.
+El estimador de Lincoln–Petersen puede presentar sesgo cuando el número
+de recapturas es pequeño.
 
-<div class="equation-panel">
+::: equation-panel
 
-$$
-\hat{N}_{Chapman}=\frac{(M+1)(C+1)}{R+1}-1
-$$
-
-</div>
+$$\hat{N}_{Chapman}=\frac{(M+1)(C+1)}{R+1}-1$$
+:::
 
 Para el mismo escenario:
 
-$$
-\hat{N}_{Chapman}=\frac{(50+1)(60+1)}{15+1}-1\approx 193.44
-$$
+$$\hat{N}_{Chapman}=\frac{(50+1)(60+1)}{15+1}-1\approx 193.44$$
 
-<div class="brand-note">Chapman no “corrige todos los problemas” del diseño; reduce el sesgo del estimador bajo el mismo conjunto de supuestos.</div>
+::: brand-note
+Chapman no “corrige todos los problemas” del diseño; reduce el sesgo del
+estimador bajo el mismo conjunto de supuestos.
+:::
 
----
+------------------------------------------------------------------------
 
 ## La incertidumbre también debe estimarse
 
 Una aproximación habitual para la varianza de Chapman es:
 
-<div class="equation-panel">
+::: equation-panel
 
-$$
-\operatorname{Var}(\hat{N})=
-\frac{(M+1)(C+1)(M-R)(C-R)}{(R+1)^2(R+2)}
-$$
-
-</div>
+$$\operatorname{Var}(\hat{N})=
+\frac{(M+1)(C+1)(M-R)(C-R)}{(R+1)^2(R+2)}$$
+:::
 
 Luego:
 
-$$
-SE=\sqrt{\operatorname{Var}(\hat{N})}
-$$
+$$SE=\sqrt{\operatorname{Var}(\hat{N})}$$
 
-$$
-IC_{95\%}\approx \hat{N}_{Chapman}\pm 1.96\,SE
-$$
+$$IC_{95\%}\approx \hat{N}_{Chapman}\pm 1.96\,SE$$
 
-<div class="small-source">En aplicaciones reales, la elección del intervalo debe considerar tamaño de muestra, comportamiento del estimador y estructura del estudio.</div>
+::: small-source
+En aplicaciones reales, la elección del intervalo debe considerar tamaño
+de muestra, comportamiento del estimador y estructura del estudio.
+:::
 
----
+------------------------------------------------------------------------
 
 ## Pocas recapturas = mucha incertidumbre
 
-::: columns
-::: {.column width="48%"}
+::::::: columns
+:::: {.column width="48%"}
 ### Escenario A
 
-<span class="pill">M = 50</span>
-<span class="pill blue">C = 60</span>
-<span class="pill">R = 15</span>
+[M = 50]{.pill} [C = 60]{.pill .blue} [R = 15]{.pill}
 
 Recapturas relativamente frecuentes.
 
-<div class="compare-b">Estimación más estable.</div>
+::: compare-b
+Estimación más estable.
 :::
+::::
 
-::: {.column width="48%"}
+:::: {.column width="48%"}
 ### Escenario B
 
-<span class="pill">M = 50</span>
-<span class="pill blue">C = 60</span>
-<span class="pill red">R = 3</span>
+[M = 50]{.pill} [C = 60]{.pill .blue} [R = 3]{.pill .red}
 
 Muy pocos marcados reaparecen.
 
-<div class="compare-a">Estimación grande e imprecisa.</div>
+::: compare-a
+Estimación grande e imprecisa.
 :::
+::::
+:::::::
+
+::: {.brand-note .red}
+Cuando <strong>R disminuye</strong>, el **denominador** se vuelve pequeño y
+la estimación responde de forma muy sensible a cada recaptura.
 :::
 
-<div class="brand-note red">Cuando <strong>R disminuye</strong>, el denominador se vuelve pequeño y la estimación responde de forma muy sensible a cada recaptura.</div>
+------------------------------------------------------------------------
 
----
+## Sensibilidad del estimador a Recapturas
 
-## Sensibilidad del estimador a R
+::: columns
 
-Manteniendo M y C constantes:
+::: {.column width="36%"}
 
-| R | Lincoln–Petersen |
-|---:|---:|
-| 20 | 150 |
-| 15 | 200 |
-| 10 | 300 |
-| 5  | 600 |
-| 2  | 1500 |
+### Relación clave
 
-<div class="brand-note">El cálculo puede ser matemáticamente válido y, al mismo tiempo, poco informativo si el diseño produce muy pocas recapturas.</div>
+Manteniendo **M = 50 y C = 60  constantes**:
 
----
+::: equation-panel
 
-## 03 · Supuestos del modelo {.section-slide .no-underline}
+$$
+\hat{N}_{LP}=\frac{M\,C}{R}
+$$
 
-<div class="section-subtitle">La ecuación es sencilla; la validez de la inferencia depende de que el proceso biológico sea compatible con sus supuestos.</div>
+:::
 
----
+### $R \downarrow \quad \Rightarrow \quad \hat{N}_{LP} \uparrow$
+
+**Menos recapturas sugieren una población mayor**, pero también hacen que la estimación de $\hat{N}_{LP}$ sea más **incierta**.
+
+:::
+
+::: {.column width="64%"}
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 4.6
+#| fig-align: center
+#| out-width: "100%"
+
+sensibilidad_R <- tibble::tibble(
+  R = c(2, 5, 10, 15, 20),
+  N_LP = c(1500, 600, 300, 200, 150)
+)
+
+library(ggplot2)
+
+ggplot(
+  sensibilidad_R,
+  aes(x = R, y = N_LP)
+) +
+  geom_line(
+    linewidth = 1.4,
+    color = "#5A6E36"
+  ) +
+  geom_point(
+    size = 4.2,
+    color = "#123A5A"
+  ) +
+  geom_text(
+    aes(label = N_LP),
+    vjust = -0.7,
+    size = 4.5,
+    fontface = "bold",
+    color = "#1A3D14"
+  ) +
+  scale_x_continuous(
+    breaks = c(2, 5, 10, 15, 20)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1700),
+    breaks = c(0, 400, 800, 1200, 1600),
+    labels = scales::label_number(),
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  labs(
+    x = "Individuos recapturados (R)",
+    y = "Abundancia estimada (N̂LP)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.title = element_text(
+      face = "bold",
+      color = "#5B5B5B"
+    ),
+    axis.text = element_text(
+      color = "#5B5B5B"
+    ),
+    plot.margin = margin(
+      t = 12,
+      r = 15,
+      b = 8,
+      l = 8
+    )
+  )
+```
+
+:::
+
+:::
+
+------------------------------------------------------------------------
+
+## Supuestos del modelo {.section-slide .no-underline}
+
+::: section-subtitle
+La ecuación es sencilla; la validez de la inferencia depende de que el
+proceso biológico sea compatible con sus supuestos.
+:::
+
+------------------------------------------------------------------------
 
 ## Cuatro supuestos fundamentales
 
-<div class="brand-grid four">
+::::::::::::::: {.brand-grid .four}
+::::: {.brand-card .green}
+::: card-number
+01
+:::
 
-<div class="brand-card green">
-<div class="card-number">01</div>
-<div class="card-title">Población cerrada</div>
-<p>Sin nacimientos, muertes, inmigración o emigración relevantes entre ocasiones.</p>
-</div>
+::: card-title
+Población cerrada
+:::
 
-<div class="brand-card blue">
-<div class="card-number">02</div>
-<div class="card-title">Marcas persistentes</div>
+<p>Sin nacimientos, muertes, inmigración o emigración relevantes entre
+ocasiones.</p>
+:::::
+
+::::: {.brand-card .blue}
+::: card-number
+02
+:::
+
+::: card-title
+Marcas persistentes
+:::
+
 <p>La marca no se pierde y se reconoce correctamente.</p>
-</div>
+:::::
 
-<div class="brand-card green">
-<div class="card-number">03</div>
-<div class="card-title">Capturabilidad comparable</div>
-<p>Los individuos tienen probabilidades de captura suficientemente semejantes.</p>
-</div>
+::::: {.brand-card .green}
+::: card-number
+03
+:::
 
-<div class="brand-card blue">
-<div class="card-number">04</div>
-<div class="card-title">Marca neutral</div>
+::: card-title
+Capturabilidad comparable
+:::
+
+<p>Los individuos tienen probabilidades de captura suficientemente
+semejantes.</p>
+:::::
+
+::::: {.brand-card .blue}
+::: card-number
+04
+:::
+
+::: card-title
+Marca neutral
+:::
+
 <p>Marcar no modifica supervivencia ni probabilidad de recaptura.</p>
-</div>
+:::::
+:::::::::::::::
 
-</div>
-
----
+------------------------------------------------------------------------
 
 ## ¿Qué ocurre si un supuesto falla?
 
 | Violación | Consecuencia potencial |
-|---|---|
+|------------------------------------|------------------------------------|
 | Marcados evitan las trampas | R disminuye → N puede sobreestimarse |
 | Marcados son atraídos a las trampas | R aumenta → N puede subestimarse |
 | Emigración de marcados | R disminuye → apariencia de una población mayor |
 | Pérdida de marcas | recapturados se cuentan como no marcados |
 | Mortalidad asociada al marcado | altera la fracción marcada disponible |
 
-<div class="brand-note red">La dirección del sesgo depende del mecanismo. Antes de “corregir” una cifra debemos identificar qué proceso generó la violación.</div>
+::: {.brand-note .red}
+La dirección del sesgo depende del mecanismo. Antes de “corregir” una
+cifra debemos identificar qué proceso generó la violación.
+:::
 
----
+------------------------------------------------------------------------
 
 ## La escala temporal define qué significa “cerrada”
 
-<div class="brand-grid three">
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+Horas / días
+:::
 
-<div class="brand-card green">
-<div class="card-title">Horas / días</div>
 <p>Puede ser razonable para algunas poblaciones y métodos.</p>
-</div>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">Semanas</div>
+:::: {.brand-card .blue}
+::: card-title
+Semanas
+:::
+
 <p>Aumenta el riesgo de movimiento, mortalidad o reclutamiento.</p>
-</div>
+::::
 
-<div class="brand-card red">
-<div class="card-title">Meses</div>
+:::: {.brand-card .red}
+::: card-title
+Meses
+:::
+
 <p>La hipótesis de cierre suele requerir una justificación mucho más fuerte.</p>
-</div>
+::::
+:::::::::
 
-</div>
+::: brand-note
+**“Población cerrada”** no significa inmóvil: *significa que los cambios entre ocasiones son despreciables para la inferencia propuesta.*
+:::
 
-<div class="brand-note">“Población cerrada” no significa inmóvil: significa que los cambios entre ocasiones son despreciables para la inferencia propuesta.</div>
+------------------------------------------------------------------------
 
----
+## Del estimador a una función en R {.section-slide .no-underline}
 
-## 04 · Del estimador a una función en R {.section-slide .no-underline}
+::: section-subtitle
+Programar el método obliga a declarar entradas, validar restricciones y
+definir exactamente qué resultados devuelve.
+:::
 
-<div class="section-subtitle">Programar el método obliga a declarar entradas, validar restricciones y definir exactamente qué resultados devuelve.</div>
-
----
+------------------------------------------------------------------------
 
 ## Diseñar la función antes de escribirla
 
-<div class="brand-grid three">
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+Entradas
+:::
 
-<div class="brand-card green">
-<div class="card-title">Entradas</div>
-<p><code>M</code>, <code>C</code>, <code>R</code>, nivel de confianza.</p>
-</div>
+<p><code>M</code>, <code>C</code>, <code>R</code>, nivel de
+confianza.</p>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">Validaciones</div>
-<p>R &gt; 0, valores no negativos y R ≤ min(M, C).</p>
-</div>
+:::: {.brand-card .blue}
+::: card-title
+Validaciones
+:::
 
-<div class="brand-card green">
-<div class="card-title">Salidas</div>
+<p>R \> 0, valores no negativos y R ≤ min(M, C).</p>
+::::
+
+:::: {.brand-card .green}
+::: card-title
+Salidas
+:::
+
 <p>LP, Chapman, varianza, SE e intervalo.</p>
-</div>
+::::
+:::::::::
 
-</div>
-
-```r
+``` r
 estimador_lp <- function(M, C, R, nivel = 0.95) {
   # validar entradas
   # calcular estimadores
@@ -356,42 +594,72 @@ estimador_lp <- function(M, C, R, nivel = 0.95) {
 }
 ```
 
----
+------------------------------------------------------------------------
 
 ## Validar es comparar resultados independientes
 
-<div class="brand-grid three">
+:::::::::::: {.brand-grid .three}
+::::: {.brand-card .green}
+::: card-number
+1
+:::
 
-<div class="brand-card green">
-<div class="card-number">1</div>
-<div class="card-title">Cálculo manual</div>
+::: card-title
+Cálculo manual
+:::
+
 <p>Resolver el escenario A paso por paso.</p>
-</div>
+:::::
 
-<div class="brand-card blue">
-<div class="card-number">2</div>
-<div class="card-title">Función</div>
+::::: {.brand-card .blue}
+::: card-number
+2
+:::
+
+::: card-title
+Función
+:::
+
 <p>Ejecutar exactamente los mismos M, C y R.</p>
-</div>
+:::::
 
-<div class="brand-card green">
-<div class="card-number">3</div>
-<div class="card-title">Contraste</div>
-<p>Verificar que ambos resultados coincidan dentro de la precisión numérica.</p>
-</div>
+::::: {.brand-card .green}
+::: card-number
+3
+:::
 
-</div>
+::: card-title
+Contraste
+:::
 
-<div class="brand-note dashed"><strong>Programar no reemplaza comprender el modelo.</strong> La validación conecta la fórmula, el código y la interpretación biológica.</div>
+<p>Verificar que ambos resultados coincidan dentro de la precisión
+numérica.</p>
+:::::
+::::::::::::
 
----
+::: {.brand-note .dashed}
+<strong>Programar no reemplaza comprender el modelo.</strong> La
+validación conecta la fórmula, el código y la interpretación biológica.
+:::
+
+------------------------------------------------------------------------
 
 ## Del fundamento al laboratorio {.no-underline}
 
-<div class="kicker">Ahora en RStudio</div>
+::: kicker
+Ahora en RStudio
+:::
 
-<div class="section-title"><code>scripts/03_lab-lincoln-petersen.R</code></div>
+::: section-title
+<code>scripts/03_lab-lincoln-petersen.R</code>
+:::
 
-<div class="brand-note blue">Construiremos el estimador paso a paso, lo convertiremos en una función, compararemos escenarios y evaluaremos su sensibilidad a las recapturas.</div>
+::: {.brand-note .blue}
+Construiremos el estimador paso a paso, lo convertiremos en una función,
+compararemos escenarios y evaluaremos su sensibilidad a las recapturas.
+:::
 
-<div class="small-source">Métodos clásicos de captura–recaptura de dos ocasiones: Lincoln–Petersen y corrección de Chapman.</div>
+::: small-source
+Métodos clásicos de captura–recaptura de dos ocasiones: Lincoln–Petersen
+y corrección de Chapman.
+:::
