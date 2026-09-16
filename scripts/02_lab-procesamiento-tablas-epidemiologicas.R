@@ -1,4 +1,4 @@
-# ============================================================================== 
+# about script ======================================================== 
 # Ecología de Enfermedades I
 # Laboratorio 2 — Procesamiento de tablas epidemiológicas
 # Semana 2 | 07 septiembre 2026
@@ -13,15 +13,13 @@
 # - información de la sesión de R.
 #
 # Docente: MVZ, MSc. José Fernando Aguilera González
-# ============================================================================== 
-
+# contacto: mvzferglez@gmail
 
 # 00. Preparación --------------------------------------------------------------
 
 # IMPORTANTE:
 # Abra siempre "ecologia-enfermedades-i.Rproj".
 # No utilice setwd(): el proyecto usa rutas relativas con here().
-
 paquetes <- c("tidyverse", "janitor", "lubridate", "here")
 
 faltantes <- paquetes[!paquetes %in% rownames(installed.packages())]
@@ -37,6 +35,7 @@ library(here)
 
 cat("Raíz del proyecto:\n", here(), "\n")
 
+pacman::p_load(tidyverse, janitor, lubridate, here) # alternativa
 
 # 01. Localizar los archivos ---------------------------------------------------
 
@@ -113,7 +112,7 @@ surv_raw %>%
 # Antes de limpiar, primero describimos el problema.
 
 auditoria_raw <- tibble(
-  indicador = c(
+  indicador = c( 
     "filas",
     "columnas",
     "case_id únicos",
@@ -123,7 +122,7 @@ auditoria_raw <- tibble(
     "género Unknown",
     "peso negativo"
   ),
-  valor = c(
+  valor = c( 
     nrow(surv_raw),
     ncol(surv_raw),
     n_distinct(surv_raw$case_id),
@@ -154,7 +153,7 @@ names(surv)
 # 06. select() y rename(): elegir variables -----------------------------------
 
 surv <- surv %>%
-  rename(
+  rename(# NEW = OLD
     date_onset = onset_date,
     date_report = date_of_report,
     district_res = adm3_name_res,
