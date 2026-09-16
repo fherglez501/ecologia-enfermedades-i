@@ -1,10 +1,31 @@
 ---
 title: "Diseño de muestreo con R"
 subtitle: "Tamaño de muestra, detección y selección probabilística"
-author: "José Fernando Aguilera González · MVZ, MSc."
+author: "MVZ, MSc José Fernando Aguilera González"
 date: "12/09/2026"
-title-slide-attributes:
-  data-background-color: "#FFFFFF"
+date-format: medium
+lang: es
+
+format:
+  revealjs:
+    width: 1600
+    height: 900
+    margin: 0.04
+
+    center: false
+
+    slide-number: c/t
+    progress: true
+    controls: true
+
+    transition: fade
+    background-transition: fade
+
+    code-line-numbers: true
+    code-overflow: scroll
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 ## Ruta del script
