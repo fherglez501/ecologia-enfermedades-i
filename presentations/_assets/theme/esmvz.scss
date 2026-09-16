@@ -1,454 +1,2214 @@
 /*-- scss:defaults --*/
 
-// ESMVZ · Ecología de Enfermedades I
-// Tema Quarto / RevealJS derivado de la identidad visual de las presentaciones docentes.
+// =================================
+// ESMVZ · ECOLOGÍA DE ENFERMEDADES I
+// Quarto / RevealJS · Tema híbrido
+// Portada blanca + contenido oscuro
+// =================================
 
-$font-family-sans-serif: "Google Sans", "Google Sans Text", "Aptos", "Segoe UI", Arial, sans-serif !default;
-$presentation-heading-font: "Google Sans", "Google Sans Text", "Aptos Display", "Segoe UI", Arial, sans-serif !default;
-$presentation-heading-font-weight: 700 !default;
+
+// =================================
+// 1. TIPOGRAFÍA
+// =================================
+
+$font-family-sans-serif:
+  "Google Sans",
+  "Google Sans Text",
+  "Aptos",
+  "Segoe UI",
+  Arial,
+  sans-serif !default;
+
+$presentation-heading-font:
+  "Google Sans",
+  "Google Sans Text",
+  "Aptos Display",
+  "Segoe UI",
+  Arial,
+  sans-serif !default;
+
+$presentation-heading-font-weight: 800 !default;
 $presentation-heading-text-transform: none !default;
-$presentation-heading-letter-spacing: -0.02em !default;
+$presentation-heading-letter-spacing: -0.20px !default;
+
+
+// -------------------
+// Tamaño base RevealJS
+// -------------------
+
 $presentation-font-size-root: 34px !default;
 
-// Paleta principal extraída de la presentación de referencia.
-$esmvz-green:       #5A6E36 !default;
-$esmvz-green-dark:  #1A3D14 !default;
-$esmvz-blue:        #123A5A !default;
-$esmvz-red:         #8A3D35 !default;
-$esmvz-red-strong:  #980000 !default;
-$esmvz-gray:        #5B5B5B !default;
-$esmvz-muted:       #7A7A7A !default;
-$esmvz-muted-green: #7A857A !default;
-$esmvz-line:        #D7DBD2 !default;
-$esmvz-green-soft:  #F0F4E9 !default;
-$esmvz-gray-soft:   #F4F5F3 !default;
-$esmvz-blue-soft:   #EAF0F5 !default;
-$esmvz-red-soft:    #F8ECEA !default;
-$esmvz-white:       #FFFFFF !default;
 
-$body-bg: $esmvz-white !default;
-$body-color: $esmvz-gray !default;
+// =================================
+// 2. ESCALA TIPOGRÁFICA
+// =================================
+
+$size-h1: 90px;
+$size-h2: 50px;
+$size-h3: 40px;
+$size-h4: 36px;
+
+$size-body: 30px;
+
+$size-card-title: 38px;
+$size-card-text: 34px;
+
+$size-signature: 26px;
+
+$size-source: 18px;
+$size-code: 28px;
+
+
+// =================================
+// 3. PALETA OSCURA
+// =================================
+
+$esmvz-bg:          #0B0D0C;
+$esmvz-panel:       #141714;
+$esmvz-panel-soft:  #191D19;
+$esmvz-code-bg:     #101311;
+
+$esmvz-white:       #F4F6F2;
+$esmvz-text:        #E8EBE5;
+$esmvz-gray:        #C4C9C0;
+$esmvz-muted:       #929A8E;
+$esmvz-muted-green: #99A88F;
+
+$esmvz-green:       #8FAA63;
+$esmvz-green-dark:  #A7C774;
+
+$esmvz-blue:        #78A9CF;
+
+$esmvz-red:         #D07B72;
+$esmvz-red-strong:  #ED9B91;
+
+$esmvz-line:        #343A34;
+
+$esmvz-green-soft:  rgba($esmvz-green, 0.10);
+$esmvz-blue-soft:   rgba($esmvz-blue, 0.10);
+$esmvz-red-soft:    rgba($esmvz-red, 0.10);
+$esmvz-gray-soft:   #171A18;
+
+
+// -------------------
+// Paleta portada
+// -------------------
+
+$cover-bg:          #FFFFFF;
+$cover-title:       #252525;
+$cover-subtitle:    #5A6E36;
+$cover-author:      #5B5B5B;
+$cover-date:        #7A7A7A;
+
+
+// =================================
+// 4. VARIABLES QUARTO
+// =================================
+
+$body-bg: $esmvz-bg !default;
+$body-color: $esmvz-text !default;
+
 $link-color: $esmvz-blue !default;
-$selection-bg: rgba($esmvz-green, 0.22) !default;
+
+$selection-bg: rgba($esmvz-green, 0.25) !default;
+
 $code-color: $esmvz-red-strong !default;
-$code-bg: $esmvz-gray-soft !default;
-$presentation-heading-color: $esmvz-gray !default;
-$presentation-h1-font-size: 2.05em !default;
-$presentation-h2-font-size: 1.34em !default;
-$presentation-h3-font-size: 0.92em !default;
-$presentation-h4-font-size: 0.78em !default;
+$code-bg: $esmvz-code-bg !default;
+
+$presentation-heading-color: $esmvz-white !default;
+
+$presentation-h1-font-size: $size-h1 !default;
+$presentation-h2-font-size: $size-h2 !default;
+$presentation-h3-font-size: $size-h3 !default;
+$presentation-h4-font-size: $size-h4 !default;
+
 
 /*-- scss:rules --*/
 
-.reveal {
-  color: $esmvz-gray;
-  font-family: $font-family-sans-serif;
+
+// =================================
+// 5. VARIABLES DE DISEÑO
+// =================================
+
+:root {
+
+  // -------------------
+  // Firma
+  // -------------------
+
+  --signature-top: 18px;
+  --signature-right: 34px;
+
+  --signature-size: 30px;
+  --signature-line-height: 32px;
+
+  // Espacio real entre firma y título
+  --signature-title-gap: 58px;
+
+  // -------------------
+  // Línea de título
+  // -------------------
+
+  --title-line-width: 200px;
+  --title-line-height: 6px;
+  --title-line-top-gap: 20px;
+  --title-line-bottom-gap: 20px;
+  
+  
+  // -------------------
+  // Título
+  // -------------------
+
+  --title-content-gap: 40px;
+
+
+  // -------------------
+  // Márgenes generales
+  // -------------------
+
+  --slide-padding-x: 34px;
+  --slide-padding-bottom: 20px;
+
+
+  // -------------------
+  // Portada
+  // -------------------
+
+  --cover-padding-x: 80px;
+  --cover-padding-y: 70px;
+
+  --cover-title-gap: 24px;
+  --cover-subtitle-gap: 46px;
+  --cover-author-gap: 16px;
+
+
+  // -------------------
+  // Tarjetas
+  // -------------------
+
+  --card-gap: 40px;
+
+  --card-padding-y: 15px;
+  --card-padding-x: 17px;
+
+  --card-radius: 9px;
+
+  --card-bottom-space: 18px;
+
+
+  // -------------------
+  // Espaciado general
+  // -------------------
+
+  --space-xs: 6px;
+  --space-sm: 10px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 34px;
+  
+  // -------------------
+  // Código
+  // -------------------
+
+  --code-top-gap: 18px;
+  --code-bottom-gap: 32px;
+  --code-grid-gap: 40px;
 }
+
+
+// =================================
+// 6. SUPERFICIE COMPLETA REVEALJS
+// =================================
+
+// El viewport general permanece oscuro.
+// Sólo #title-slide se sobrescribe a blanco.
+
+html,
+body,
+.reveal-viewport,
+.reveal {
+
+  background-color:
+    $esmvz-bg !important;
+}
+
+
+body {
+
+  margin: 0;
+}
+
+
+.reveal {
+
+  color: $esmvz-text;
+
+  font-family:
+    $font-family-sans-serif;
+
+  font-size:
+    $size-body;
+
+  background:
+    $esmvz-bg !important;
+}
+
 
 .reveal .slides {
+
   text-align: left;
+
+  background:
+    transparent !important;
 }
 
-.reveal .slides section {
+
+.reveal div.sourceCode {
+
+  margin-top:
+    var(--code-top-gap);
+
+  margin-bottom:
+    var(--code-bottom-gap);
+}
+
+// =================================
+// 7. DIAPOSITIVAS NORMALES
+// =================================
+
+// Se reserva físicamente espacio para:
+//
+// firma
+// + altura de firma
+// + separación
+// + título
+
+.reveal
+.slides
+section:not(#title-slide) {
+
   box-sizing: border-box;
-  padding: 0.45rem 0.65rem 0.35rem 0.65rem;
+
+  background:
+    transparent !important;
+
+  padding-top:
+    calc(
+      var(--signature-top)
+      + var(--signature-line-height)
+      + var(--signature-title-gap)
+    ) !important;
+
+  padding-right:
+    var(--slide-padding-x) !important;
+
+  padding-bottom:
+    var(--slide-padding-bottom) !important;
+
+  padding-left:
+    var(--slide-padding-x) !important;
+
   overflow: visible;
 }
 
-// Firma discreta del curso.
-.reveal .slides section:not(.title-slide)::before {
-  content: "Ecología de Enfermedades I";
-  position: absolute;
-  top: 0.18rem;
-  right: 0.18rem;
-  color: $esmvz-green;
-  font-size: 0.29em;
-  font-weight: 700;
-  opacity: 0.95;
+// =================================
+// DIAPOSITIVAS CON IMAGEN
+// =================================
+
+.reveal
+.slides
+section.image-slide {
+
+  text-align:
+    left;
 }
+
+
+.reveal
+.slides
+section.image-slide
+.tidy-figure {
+
+  display:
+    block;
+
+  width:
+    90%;
+
+  max-height:
+    580px;
+
+  object-fit:
+    contain;
+
+  margin:
+    0
+    auto;
+}
+
+
+// =================================
+// LOGOS HEXAGONALES
+// =================================
+
+.hex-logo {
+
+  position:
+    absolute;
+
+  right:
+    30px;
+
+  bottom:
+    26px;
+
+  width:
+    95px;
+
+  height:
+    auto;
+
+  z-index:
+    10;
+}
+
+// -------------------
+// Tamaño pequeño
+// -------------------
+
+.hex-logo.small {
+
+  width:
+    75px;
+}
+
+
+// -------------------
+// Tamaño normal
+// -------------------
+
+.hex-logo.medium {
+
+  width:
+    95px;
+}
+
+
+// -------------------
+// Tamaño grande
+// -------------------
+
+.hex-logo.large {
+
+  width:
+    120px;
+}
+
+
+// =================================
+// 8. FIRMA DEL CURSO
+// =================================
+
+.reveal
+.slides
+section:not(#title-slide)::before {
+
+  content:
+    "Ecología de Enfermedades";
+
+  position: absolute;
+
+  top:
+    var(--signature-top);
+
+  right:
+    var(--signature-right);
+
+  color:
+    $esmvz-green;
+
+  font-size:
+    var(--signature-size);
+
+  font-weight: 700;
+
+  line-height:
+    var(--signature-line-height);
+
+  letter-spacing: 0;
+
+  opacity: 0.95;
+
+  margin: 0;
+
+  padding: 0;
+}
+
+
+// -------------------
+// Portada sin firma
+// -------------------
+
+.reveal
+.slides
+section#title-slide::before {
+
+  content: none !important;
+
+  display: none !important;
+}
+
+
+// =================================
+// 9. TEXTO GENERAL
+// =================================
 
 .reveal p,
 .reveal li {
-  line-height: 1.28;
+
+  font-size:
+    $size-body;
+
+  line-height: 1.27;
 }
 
-.reveal strong { font-weight: 700; }
-.reveal em { font-style: italic; }
+
+.reveal strong {
+
+  font-weight: 700;
+
+  color:
+    $esmvz-white;
+}
+
+
+.reveal em {
+
+  font-style: italic;
+}
+
 
 .reveal a {
-  color: $esmvz-blue;
-  text-decoration-thickness: 0.06em;
-  text-underline-offset: 0.12em;
+
+  color:
+    $esmvz-blue;
+
+  text-decoration-thickness: 2px;
+
+  text-underline-offset: 4px;
 }
+
+
+// =================================
+// 10. ENCABEZADOS
+// =================================
 
 .reveal h1,
 .reveal h2,
 .reveal h3,
 .reveal h4 {
-  font-family: $presentation-heading-font;
+
+  font-family:
+    $presentation-heading-font;
+
+  text-transform: none;
 }
 
-.reveal h2 {
-  margin-bottom: 0.48em;
-  color: $esmvz-gray;
+
+// -------------------
+// H1
+// -------------------
+
+.reveal h1 {
+
+  font-size:
+    $size-h1;
+
+  font-weight: 800;
+
+  line-height: 1.02;
 }
 
-// Línea corta bajo títulos principales: recurso recurrente de la referencia.
-.reveal h2:not(.no-underline)::after {
+
+// -------------------
+// Título H2
+// -------------------
+
+.reveal
+.slides
+section:not(#title-slide)
+> h2 {
+
+  color:
+    $esmvz-white;
+
+  font-size:
+    $size-h2;
+
+  font-weight: 800;
+
+  line-height: 1.04;
+
+  letter-spacing: -0.9px;
+
+  margin-top:
+    0 !important;
+
+  margin-bottom:
+    var(--title-content-gap);
+
+  padding: 0;
+}
+
+
+// -------------------
+// Línea bajo H2
+// -------------------
+
+.reveal
+.slides
+section:not(#title-slide)
+> h2:not(.no-underline)::after {
+
   content: "";
+
   display: block;
-  width: 4.6rem;
-  height: 0.12rem;
-  margin-top: 0.22rem;
+
+  width: var(--title-line-width);
+  height: var(--title-line-height);
+
+  margin-top: var(--title-line-top-gap);
+  margin-bottom: var(--title-line-bottom-gap);
+
   background: $esmvz-green;
-  border-radius: 999px;
+
+  border-radius: 100px;
 }
+
+
+// -------------------
+// H3
+// -------------------
 
 .reveal h3 {
-  color: $esmvz-green-dark;
-  margin-bottom: 0.25em;
+
+  color:
+    $esmvz-green-dark;
+
+  font-size:
+    $size-h3;
+
+  font-weight: 700;
+
+  margin-top: 0;
+
+  margin-bottom: 14px;
+
+  line-height: 1.08;
 }
+
+
+// -------------------
+// H4
+// -------------------
+
+.reveal h4 {
+
+  color:
+    $esmvz-white;
+
+  font-size:
+    $size-h4;
+
+  font-weight: 700;
+
+  margin-top: 0;
+
+  margin-bottom: 12px;
+
+  line-height: 1.1;
+}
+
+
+// =================================
+// 11. KICKER / LEAD
+// =================================
 
 .kicker {
-  color: $esmvz-green;
-  font-size: 0.55em;
+
+  color:
+    $esmvz-green;
+
+  font-size: 21px;
+
   font-weight: 700;
-  letter-spacing: 0.045em;
+
+  letter-spacing: 1.2px;
+
   text-transform: uppercase;
-  margin-bottom: 0.16rem;
+
+  margin-bottom: 8px;
 }
 
+
 .lead {
-  color: $esmvz-muted;
-  font-size: 1.06em;
+
+  color:
+    $esmvz-gray;
+
+  font-size: 34px;
+
   font-style: italic;
+
   line-height: 1.25;
 }
 
+
+// =================================
+// 12. DIAPOSITIVAS DE SECCIÓN
+// =================================
+
 .section-number {
-  color: $esmvz-green;
-  font-size: 1.75em;
+
+  color:
+    $esmvz-green;
+
+  font-size: 58px;
+
   font-weight: 700;
+
   line-height: 1;
-  margin-bottom: 0.26rem;
+
+  margin-bottom: 10px;
 }
 
+
 .section-title {
-  color: $esmvz-gray;
-  font-size: 1.9em;
-  font-weight: 700;
-  line-height: 1.08;
+
+  color:
+    $esmvz-white;
+
+  font-size: 64px;
+
+  font-weight: 800;
+
+  line-height: 1.06;
+
   margin: 0;
 }
 
+
 .section-subtitle {
-  color: $esmvz-muted;
-  font-size: 1.15em;
+
+  color:
+    $esmvz-gray;
+
+  font-size: 65px;
+
   font-style: italic;
+
   line-height: 1.25;
-  max-width: 72%;
-  margin-top: 0.85rem;
+
+  max-width: 82%;
+
+  margin-top: 26px;
+  
+  text-align: left;
 }
 
-.reveal .slides section.section-slide {
-  padding-top: 1.25rem;
+
+// -------------------
+// Sección especial
+// -------------------
+
+.reveal
+.slides
+section.section-slide {
+
+  padding-top:
+    80px !important;
 }
 
-.reveal .slides section.section-slide::before,
-.reveal .slides section.section-slide h2::after {
+
+.reveal
+.slides
+section.section-slide::before {
+
+  display:
+    none !important;
+}
+
+
+.reveal
+.slides
+section.section-slide
+h2::after {
+
   display: none;
 }
 
-// Portada.
-.reveal .title-slide {
-  text-align: left;
-  padding: 1.15rem 0.8rem 0.7rem 0.8rem;
+
+.reveal
+.section-subtitle
+p {
+
+  font-size:
+    inherit !important;
+
+  color:
+    inherit;
+
+  font-style:
+    inherit;
+
+  line-height:
+    inherit;
+    
+  text-align:
+    left;  
+
+  margin:
+    0;
 }
 
-.reveal .title-slide::before {
-  content: "Ecología de Enfermedades I";
-  display: block;
-  color: $esmvz-green;
-  font-size: 0.46em;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  margin-bottom: 1.2rem;
+
+// =================================
+// 13. PORTADA
+// =================================
+
+// La portada es la única diapositiva blanca.
+// El contenido queda centrado vertical
+// y horizontalmente.
+
+.reveal
+.slides
+section#title-slide {
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  height: 100%;
+
+  min-height: 100%;
+
+  padding:
+    var(--cover-padding-y)
+    var(--cover-padding-x) !important;
+
+  background:
+    $cover-bg !important;
+
+  color:
+    $cover-title !important;
+
+  display:
+    flex !important;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  text-align:
+    center !important;
+
+  overflow:
+    hidden;
 }
 
-.reveal .title-slide h1 {
-  color: $esmvz-gray;
-  max-width: 80%;
+
+// -------------------
+// Portada sin firma
+// -------------------
+
+.reveal
+.slides
+section#title-slide::before {
+
+  content:
+    none !important;
+
+  display:
+    none !important;
+}
+
+
+// -------------------
+// Contenedor Quarto
+// -------------------
+
+.reveal
+#title-slide
+.quarto-title-block {
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+}
+
+
+// -------------------
+// Título
+// -------------------
+
+.reveal
+#title-slide
+h1 {
+
+  color:
+    $cover-title !important;
+
+  font-size:
+    $size-h1 !important;
+
+  font-weight: 800;
+
   line-height: 1.02;
-  margin-bottom: 0.35rem;
+
+  letter-spacing: -1.2px;
+
+  max-width: 88%;
+
+  text-align:
+    center !important;
+
+  margin:
+    0
+    auto
+    var(--cover-title-gap)
+    auto !important;
 }
 
-.reveal .title-slide .subtitle {
-  color: $esmvz-green-dark;
-  font-size: 0.88em;
+
+// -------------------
+// Subtítulo
+// -------------------
+
+.reveal
+#title-slide
+.subtitle {
+
+  color:
+    $cover-subtitle !important;
+
+  font-size:
+    38px !important;
+
+  font-weight: 600;
+
+  line-height: 1.18;
+
+  max-width: 82%;
+
+  text-align:
+    center !important;
+
+  margin:
+    0
+    auto
+    var(--cover-subtitle-gap)
+    auto !important;
+}
+
+
+// -------------------
+// Autor
+// -------------------
+
+.reveal
+#title-slide
+.author {
+
+  color:
+    $cover-author !important;
+
+  font-size:
+    30px !important;
+
+  font-weight: 400;
+
+  line-height: 1.2;
+
+  text-align:
+    center !important;
+
+  margin:
+    0
+    auto
+    var(--cover-author-gap)
+    auto !important;
+}
+
+
+// -------------------
+// Fecha
+// -------------------
+
+.reveal
+#title-slide
+.date {
+
+  color:
+    $cover-date !important;
+
+  font-size:
+    25px !important;
+
+  font-weight: 400;
+
+  line-height: 1.2;
+
+  text-align:
+    center !important;
+
+  margin:
+    0
+    auto !important;
+}
+
+
+// -------------------
+// Texto portada
+// -------------------
+
+.reveal
+#title-slide
+p {
+
+  text-align:
+    center !important;
+}
+
+
+// -------------------
+// Strong portada
+// -------------------
+
+.reveal
+#title-slide
+strong {
+
+  color:
+    $cover-title !important;
+}
+
+
+// =================================
+// 14. GRID DE TARJETAS
+// =================================
+
+.brand-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    var(--card-gap);
+
+  width: 100%;
+
+  margin-top: 0;
+
+  margin-bottom:
+    var(--card-bottom-space);
+}
+
+
+// -------------------
+// Código seguido de tarjetas
+// -------------------
+
+.reveal
+div.sourceCode
++ .brand-grid {
+
+  margin-top:
+    var(--code-grid-gap) !important;
+}
+
+
+.reveal
+.cell:has(div.sourceCode)
++ .brand-grid {
+
+  margin-top:
+    var(--code-grid-gap) !important;
+}
+
+
+.brand-grid.three {
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+}
+
+
+.brand-grid.four {
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+}
+
+// =================================
+// 15. TARJETA BASE
+// =================================
+
+.brand-card {
+
+  box-sizing: border-box;
+
+  background:
+    $esmvz-panel;
+
+  border:
+    1.5px solid
+    $esmvz-line;
+
+  border-radius:
+    var(--card-radius);
+
+  padding:
+    var(--card-padding-y)
+    var(--card-padding-x);
+
+  min-height: 0;
+
+  height: auto;
+
+  box-shadow: none;
+}
+
+
+// =================================
+// 16. VARIANTES DE TARJETA
+// =================================
+
+.brand-card.green {
+
+  border-color:
+    rgba(
+      $esmvz-green,
+      0.75
+    );
+
+  background:
+    $esmvz-green-soft;
+}
+
+
+.brand-card.blue {
+
+  border-color:
+    rgba(
+      $esmvz-blue,
+      0.75
+    );
+
+  background:
+    $esmvz-blue-soft;
+}
+
+
+.brand-card.red {
+
+  border-color:
+    rgba(
+      $esmvz-red,
+      0.75
+    );
+
+  background:
+    $esmvz-red-soft;
+}
+
+
+.brand-card.white-green {
+
+  border-color:
+    rgba(
+      $esmvz-green,
+      0.80
+    );
+
+  background:
+    $esmvz-panel;
+}
+
+
+// =================================
+// 17. CONTENIDO DE TARJETAS
+// =================================
+
+.brand-card
+> :first-child {
+
+  margin-top: 0;
+}
+
+
+.brand-card
+> :last-child {
+
+  margin-bottom: 0;
+}
+
+
+// -------------------
+// Número
+// -------------------
+
+.brand-card
+.card-number {
+
+  color:
+    $esmvz-green-dark;
+
+  font-size: 32px;
+
+  font-weight: 900;
+
+  line-height: 1;
+
+  margin-top: 0;
+
+  margin-bottom: 8px;
+}
+
+
+// -------------------
+// Título
+// -------------------
+
+.brand-card
+.card-title {
+
+  color:
+    $esmvz-green-dark;
+
+  font-size:
+    $size-card-title;
+
   font-weight: 700;
-  max-width: 75%;
+
+  line-height: 1.08;
+
+  margin-top: 0;
+
+  margin-bottom: 9px;
+}
+
+
+// -------------------
+// Azul
+// -------------------
+
+.brand-card.blue
+.card-title,
+
+.brand-card.blue
+.card-number {
+
+  color:
+    $esmvz-blue;
+}
+
+
+// -------------------
+// Rojo
+// -------------------
+
+.brand-card.red
+.card-title,
+
+.brand-card.red
+.card-number {
+
+  color:
+    $esmvz-red;
+}
+
+
+// -------------------
+// Texto
+// -------------------
+
+.brand-card p,
+.brand-card li {
+
+  color:
+    $esmvz-gray;
+
+  font-size:
+    $size-card-text;
+
+  line-height: 1.22;
+
+  margin-top: 0;
+
+  margin-bottom: 5px;
+}
+
+
+// =================================
+// 18. NOTAS
+// =================================
+
+.brand-note {
+
+  box-sizing: border-box;
+
+  background:
+    $esmvz-green-soft;
+
+  border:
+    1.5px solid
+    rgba(
+      $esmvz-green,
+      0.75
+    );
+
+  border-radius: 9px;
+
+  padding:
+    14px
+    18px;
+
+  margin-top: 18px;
+
+  margin-bottom: 14px;
+
+  color:
+    $esmvz-gray;
+
+  font-size: 30px;
+
   line-height: 1.22;
 }
 
-.reveal .title-slide .author,
-.reveal .title-slide .date {
-  color: $esmvz-muted;
-  font-size: 0.54em;
+
+.brand-note strong {
+
+  color:
+    $esmvz-green-dark;
 }
 
-// Tarjetas y paneles.
-.brand-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.62rem;
-  width: 100%;
-}
-
-.brand-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.brand-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-.brand-card {
-  background: $esmvz-white;
-  border: 0.045rem solid $esmvz-line;
-  border-radius: 0.42rem;
-  padding: 0.58rem 0.62rem;
-  min-height: 4.1rem;
-  box-shadow: none;
-}
-
-.brand-card.green {
-  border-color: $esmvz-green;
-  background: $esmvz-green-soft;
-}
-
-.brand-card.blue {
-  border-color: $esmvz-blue;
-  background: $esmvz-blue-soft;
-}
-
-.brand-card.red {
-  border-color: $esmvz-red;
-  background: $esmvz-red-soft;
-}
-
-.brand-card.white-green {
-  border-color: $esmvz-green;
-  background: $esmvz-white;
-}
-
-.brand-card > :first-child { margin-top: 0; }
-.brand-card > :last-child { margin-bottom: 0; }
-
-.brand-card .card-number {
-  color: $esmvz-green;
-  font-size: 0.86em;
-  font-weight: 700;
-  margin-bottom: 0.15rem;
-}
-
-.brand-card .card-title {
-  color: $esmvz-green-dark;
-  font-size: 0.77em;
-  font-weight: 700;
-  margin-bottom: 0.22rem;
-}
-
-.brand-card.blue .card-title,
-.brand-card.blue .card-number { color: $esmvz-blue; }
-
-.brand-card.red .card-title,
-.brand-card.red .card-number { color: $esmvz-red; }
-
-.brand-card p,
-.brand-card li { font-size: 0.63em; }
-
-.brand-note {
-  background: $esmvz-green-soft;
-  border: 0.045rem solid $esmvz-green;
-  border-radius: 0.36rem;
-  padding: 0.48rem 0.62rem;
-  margin-top: 0.6rem;
-  font-size: 0.73em;
-}
 
 .brand-note.blue {
-  background: $esmvz-blue-soft;
-  border-color: $esmvz-blue;
+
+  background:
+    $esmvz-blue-soft;
+
+  border-color:
+    rgba(
+      $esmvz-blue,
+      0.75
+    );
 }
+
+
+.brand-note.blue strong {
+
+  color:
+    $esmvz-blue;
+}
+
 
 .brand-note.red {
-  background: $esmvz-red-soft;
-  border-color: $esmvz-red;
+
+  background:
+    $esmvz-red-soft;
+
+  border-color:
+    rgba(
+      $esmvz-red,
+      0.75
+    );
 }
 
-.brand-note.dashed { border-style: dashed; }
-.brand-note strong { color: $esmvz-green-dark; }
-.brand-note.blue strong { color: $esmvz-blue; }
-.brand-note.red strong { color: $esmvz-red-strong; }
+
+.brand-note.red strong {
+
+  color:
+    $esmvz-red-strong;
+}
+
+
+.brand-note.dashed {
+
+  border-style:
+    dashed;
+}
+
+
+// =================================
+// 19. PILLS
+// =================================
 
 .pill {
-  display: inline-block;
-  padding: 0.12rem 0.34rem;
-  margin: 0.06rem 0.08rem 0.06rem 0;
-  border: 0.035rem solid $esmvz-green;
-  border-radius: 999px;
-  background: $esmvz-green-soft;
-  color: $esmvz-green;
-  font-size: 0.47em;
-  font-weight: 700;
+
+  display:
+    inline-block;
+
+  padding:
+    5px
+    11px;
+
+  margin:
+    2px
+    4px
+    2px
+    0;
+
+  border:
+    1px solid
+    $esmvz-green;
+
+  border-radius:
+    100px;
+
+  background:
+    $esmvz-green-soft;
+
+  color:
+    $esmvz-green-dark;
+
+  font-size:
+    24px;
+
+  font-weight:
+    700;
 }
+
 
 .pill.blue {
-  border-color: $esmvz-blue;
-  background: $esmvz-blue-soft;
-  color: $esmvz-blue;
+
+  border-color:
+    $esmvz-blue;
+
+  background:
+    $esmvz-blue-soft;
+
+  color:
+    $esmvz-blue;
 }
+
 
 .pill.red {
-  border-color: $esmvz-red;
-  background: $esmvz-red-soft;
-  color: $esmvz-red;
+
+  border-color:
+    $esmvz-red;
+
+  background:
+    $esmvz-red-soft;
+
+  color:
+    $esmvz-red;
 }
 
-// Ecuaciones y comparación.
+
+// =================================
+// 20. ECUACIONES
+// =================================
+
 .equation-panel {
-  background: $esmvz-gray-soft;
-  border-left: 0.16rem solid $esmvz-green;
-  padding: 0.55rem 0.7rem;
-  margin: 0.45rem 0;
+
+  background:
+    $esmvz-panel-soft;
+
+  border-left:
+    5px solid
+    $esmvz-green;
+
+  padding:
+    16px
+    20px;
+
+  margin:
+    16px
+    0;
 }
 
-.equation-panel .math.display { font-size: 1.18em; }
+
+.equation-panel
+.math.display {
+
+  font-size:
+    28px;
+}
+
 
 .big-number {
-  color: $esmvz-green-dark;
-  font-size: 1.7em;
-  font-weight: 700;
-  line-height: 1;
+
+  color:
+    $esmvz-green-dark;
+
+  font-size:
+    56px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1;
 }
 
-.compare-a { color: $esmvz-red; font-weight: 700; }
-.compare-b { color: $esmvz-green; font-weight: 700; }
-.science-blue { color: $esmvz-blue; }
 
-// Código y salida.
+.compare-a {
+
+  color:
+    $esmvz-red;
+
+  font-weight:
+    700;
+}
+
+
+.compare-b {
+
+  color:
+    $esmvz-green-dark;
+
+  font-weight:
+    700;
+}
+
+
+.science-blue {
+
+  color:
+    $esmvz-blue;
+}
+
+
+// =================================
+// 21. BLOQUES DE CÓDIGO
+// =================================
+
+.reveal
+div.sourceCode {
+
+  margin-top:
+    var(--code-top-gap);
+
+  margin-bottom:
+    var(--code-bottom-gap);
+}
+
+
+// -------------------
+// Bloque pre
+// -------------------
+
 .reveal pre {
-  width: 100%;
-  box-shadow: none;
-  border-radius: 0.28rem;
-  border: 0.04rem solid $esmvz-line;
-  background: $esmvz-gray-soft;
-  font-size: 0.52em;
+
+  width:
+    100%;
+
+  box-sizing:
+    border-box;
+
+  margin-top:
+    0;
+
+  margin-bottom:
+    0;
+
+  box-shadow:
+    none;
+
+  border-radius:
+    7px;
+
+  border:
+    1px solid
+    $esmvz-line;
+
+  background:
+    $esmvz-code-bg;
+
+  font-size:
+    $size-code;
 }
 
-.reveal pre code {
-  max-height: 470px;
-  line-height: 1.25;
+
+.reveal
+pre code {
+
+  max-height:
+    430px;
+
+  line-height:
+    1.28;
 }
 
-.reveal code:not(pre code) {
-  color: $esmvz-red-strong;
-  background: $esmvz-gray-soft;
-  border-radius: 0.14rem;
-  padding: 0.02rem 0.12rem;
+
+.reveal
+code:not(pre code) {
+
+  color:
+    $esmvz-red-strong;
+
+  background:
+    rgba(
+      $esmvz-white,
+      0.06
+    );
+
+  border-radius:
+    4px;
+
+  padding:
+    1px
+    5px;
 }
+
+
+// -------------------
+// Salida de código
+// -------------------
 
 .cell-output,
 .cell-output-display {
-  border-left: 0.12rem solid $esmvz-blue;
-  padding-left: 0.45rem;
+
+  border-left:
+    4px solid
+    $esmvz-blue;
+
+  padding-left:
+    14px;
+
+  margin-top:
+    10px;
 }
 
-// Tablas: alternancia verde/azul inspirada en las tablas del material de referencia.
+
+// =================================
+// 22. TABLAS
+// =================================
+
 .reveal table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.55em;
-  color: $esmvz-gray;
+
+  width:
+    100%;
+
+  border-collapse:
+    separate;
+
+  border-spacing:
+    0;
+
+  font-size:
+    23px;
+
+  color:
+    $esmvz-gray;
 }
 
-.reveal table th {
-  background: $esmvz-green;
-  color: $esmvz-white;
-  font-weight: 700;
-  border: 0;
-  padding: 0.32rem 0.35rem;
+
+.reveal
+table th {
+
+  background:
+    #27331F;
+
+  color:
+    $esmvz-white;
+
+  font-weight:
+    700;
+
+  border:
+    0;
+
+  padding:
+    10px
+    12px;
 }
 
-.reveal table th:nth-child(even) { background: $esmvz-blue; }
 
-.reveal table td {
-  padding: 0.3rem 0.35rem;
-  border-bottom: 0.03rem solid $esmvz-line;
-  background: $esmvz-white;
+.reveal
+table th:nth-child(even) {
+
+  background:
+    #203444;
 }
 
-.reveal table tbody tr:nth-child(even) td { background: $esmvz-gray-soft; }
 
-// Listas, citas y fuentes.
+.reveal
+table td {
+
+  padding:
+    9px
+    12px;
+
+  border-bottom:
+    1px solid
+    $esmvz-line;
+
+  background:
+    $esmvz-panel;
+}
+
+
+.reveal
+table
+tbody
+tr:nth-child(even)
+td {
+
+  background:
+    $esmvz-panel-soft;
+}
+
+
+// =================================
+// 23. LISTAS
+// =================================
+
 .reveal ul,
-.reveal ol { margin-left: 1.05em; }
+.reveal ol {
 
-.reveal li::marker {
-  color: $esmvz-green;
-  font-weight: 700;
+  margin-left:
+    34px;
+
+  margin-top:
+    10px;
+
+  margin-bottom:
+    10px;
 }
 
-.reveal blockquote {
-  width: auto;
-  margin: 0.55rem 0;
-  padding: 0.45rem 0.65rem;
-  border-left: 0.14rem solid $esmvz-green;
-  background: $esmvz-green-soft;
-  color: $esmvz-gray;
-  box-shadow: none;
-  font-style: italic;
+
+.reveal li {
+
+  font-size:
+    $size-body;
+
+  line-height:
+    1.25;
+
+  margin-bottom:
+    8px;
 }
+
+
+.reveal
+li::marker {
+
+  color:
+    $esmvz-green;
+
+  font-weight:
+    700;
+}
+
+
+// =================================
+// 24. CITAS
+// =================================
+
+.reveal
+blockquote {
+
+  width:
+    auto;
+
+  margin:
+    16px
+    0;
+
+  padding:
+    14px
+    19px;
+
+  border-left:
+    5px solid
+    $esmvz-green;
+
+  background:
+    $esmvz-green-soft;
+
+  color:
+    $esmvz-gray;
+
+  box-shadow:
+    none;
+
+  font-style:
+    italic;
+}
+
+
+// =================================
+// 25. FUENTES
+// =================================
 
 .source,
 .sources,
 .small-source {
-  color: $esmvz-muted-green;
-  font-size: 0.37em;
-  font-style: italic;
-  line-height: 1.2;
+
+  color:
+    $esmvz-muted-green;
+
+  font-size:
+    $size-source;
+
+  font-style:
+    italic;
+
+  line-height:
+    1.2;
 }
+
 
 .small-muted {
-  color: $esmvz-muted;
-  font-size: 0.52em;
+
+  color:
+    $esmvz-muted;
+
+  font-size:
+    19px;
 }
 
-.columns { gap: 0.65rem; }
-.column > :first-child { margin-top: 0; }
-.center { text-align: center; }
-.right { text-align: right; }
-.no-underline::after { display: none !important; }
 
-// Navegación RevealJS.
-.reveal .slide-number {
-  color: $esmvz-muted;
-  background: transparent;
-  font-size: 0.34em;
-  right: 0.42rem;
-  bottom: 0.28rem;
+// =================================
+// 26. COLUMNAS
+// =================================
+
+.columns {
+
+  gap:
+    30px;
 }
 
-.reveal .progress {
-  height: 0.12rem;
-  color: $esmvz-green;
+
+.column
+> :first-child {
+
+  margin-top:
+    0;
 }
 
-.reveal .controls { color: $esmvz-green; }
 
-// Utilidades para contenido denso.
-.reveal .smaller { font-size: 0.86em; }
-.reveal .smallest { font-size: 0.74em; }
+.column
+> :last-child {
 
-.reveal .compact p,
-.reveal .compact li {
-  line-height: 1.12;
-  margin-top: 0.16em;
-  margin-bottom: 0.16em;
+  margin-bottom:
+    0;
+}
+
+
+.center {
+
+  text-align:
+    center;
+}
+
+
+.right {
+
+  text-align:
+    right;
+}
+
+
+.no-underline::after {
+
+  display:
+    none !important;
+}
+
+
+// =================================
+// 27. NAVEGACIÓN REVEALJS
+// =================================
+
+.reveal
+.slide-number {
+
+  color:
+    $esmvz-muted;
+
+  background:
+    transparent;
+
+  font-size:
+    15px;
+
+  right:
+    16px;
+
+  bottom:
+    10px;
+}
+
+
+.reveal
+.progress {
+
+  height:
+    4px;
+
+  color:
+    $esmvz-green;
+}
+
+
+.reveal
+.controls {
+
+  color:
+    $esmvz-green;
+}
+
+
+// =================================
+// 28. CONTENIDO DENSO
+// =================================
+
+.reveal
+.smaller {
+
+  font-size:
+    0.86em;
+}
+
+
+.reveal
+.smallest {
+
+  font-size:
+    0.74em;
+}
+
+
+.reveal
+.compact p,
+
+.reveal
+.compact li {
+
+  line-height:
+    1.12;
+
+  margin-top:
+    5px;
+
+  margin-bottom:
+    5px;
+}
+
+
+// =================================
+// 29. DIAPOSITIVA BALANCEADA
+//
+// Uso:
+//
+// ## Título {.balanced}
+//
+// =================================
+
+.reveal
+.slides
+section.balanced {
+
+  display:
+    flex !important;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    flex-start;
+}
+
+
+.reveal
+.slides
+section.balanced
+> h2 {
+
+  margin-top:
+    0 !important;
+}
+
+
+// =================================
+// 30. TARJETAS DE ALTURA UNIFORME
+//
+// Uso:
+//
+// ## Título {.fit-grid}
+//
+// =================================
+
+.reveal
+.slides
+section.fit-grid
+.brand-grid {
+
+  align-items:
+    stretch;
+
+  grid-auto-rows:
+    1fr;
+}
+
+
+.reveal
+.slides
+section.fit-grid
+.brand-card {
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    flex-start;
+}
+
+
+// =================================
+// 31. MODO DE BAJA DENSIDAD
+//
+// Para diapositivas con poco contenido.
+//
+// Uso:
+//
+// ## Título {.density-low}
+//
+// =================================
+
+.reveal
+.slides
+section.density-low {
+
+  --title-content-gap:
+    32px;
+}
+
+
+.reveal
+.slides
+section.density-low
+p,
+
+.reveal
+.slides
+section.density-low
+li {
+
+  font-size:
+    32px;
+
+  line-height:
+    1.27;
+}
+
+
+// =================================
+// 32. MODO NORMAL
+//
+// Uso:
+//
+// ## Título {.density-normal}
+//
+// =================================
+
+.reveal
+.slides
+section.density-normal {
+
+  --title-content-gap:
+    26px;
+}
+
+
+.reveal
+.slides
+section.density-normal
+p,
+
+.reveal
+.slides
+section.density-normal
+li {
+
+  font-size:
+    $size-body;
+}
+
+
+// =================================
+// 33. MODO COMPACTO
+//
+// Para diapositivas densas.
+//
+// Uso:
+//
+// ## Título {.density-high}
+//
+// =================================
+
+.reveal
+.slides
+section.density-high {
+
+  --title-content-gap:
+    18px;
+}
+
+
+.reveal
+.slides
+section.density-high
+p,
+
+.reveal
+.slides
+section.density-high
+li {
+
+  font-size:
+    26px;
+
+  line-height:
+    1.20;
+}
+
+
+.reveal
+.slides
+section.density-high
+.brand-card p,
+
+.reveal
+.slides
+section.density-high
+.brand-card li {
+
+  font-size:
+    21px;
+}
+
+
+// =================================
+// 34. PROTECCIÓN CONTRA OVERFLOW
+// =================================
+
+.reveal p,
+.reveal li,
+.reveal td,
+.reveal th {
+
+  overflow-wrap:
+    break-word;
+
+  word-break:
+    normal;
+}
+
+
+// =================================
+// 35. FONDOS POR TIPO DE DIAPOSITIVA
+// =================================
+
+// -------------------
+// Portada blanca
+// -------------------
+
+.reveal
+.slides
+section#title-slide,
+
+.reveal
+.slides
+section#title-slide.present,
+
+.reveal
+.slides
+section#title-slide.past,
+
+.reveal
+.slides
+section#title-slide.future {
+
+  background:
+    $cover-bg !important;
+}
+
+
+// -------------------
+// Resto de diapositivas oscuras
+// -------------------
+
+.reveal
+.slides
+section:not(#title-slide),
+
+.reveal
+.slides
+section:not(#title-slide).present,
+
+.reveal
+.slides
+section:not(#title-slide).past,
+
+.reveal
+.slides
+section:not(#title-slide).future {
+
+  background:
+    transparent !important;
+}
+
+
+// =================================
+// 36. AJUSTES FINALES
+// =================================
+
+.reveal-viewport {
+
+  background:
+    $esmvz-bg !important;
+}
+
+
+// El viewport sigue siendo oscuro,
+// pero la primera diapositiva conserva
+// su superficie blanca propia.
+
+.reveal
+.slides
+section#title-slide {
+
+  background-color:
+    $cover-bg !important;
 }
