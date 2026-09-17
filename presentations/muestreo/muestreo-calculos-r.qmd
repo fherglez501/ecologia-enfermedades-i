@@ -2,12 +2,14 @@
 title: "Diseño de muestreo con R"
 subtitle: "Tamaño de muestra, detección y selección probabilística"
 author: "MVZ, MSc José Fernando Aguilera González"
-date: "12/09/2026"
+institute: "Escuela Superior de Medicina Veterinaria y Zootecnia A.C."
+date: "09/12/2026"
 date-format: medium
 lang: es
 
 format:
   revealjs:
+    footnotes-hover: true
     width: 1600
     height: 900
     margin: 0.04
@@ -30,304 +32,804 @@ editor:
 
 ## Ruta del script
 
-<div class="brand-grid four">
+::::::::::::::: {.brand-grid .four}
+::::: {.brand-card .green}
+::: card-number
+01
+:::
 
-<div class="brand-card green">
-<div class="card-number">01</div>
-<div class="card-title">Detectar</div>
-<p>¿Cuántas muestras necesito para encontrar al menos un positivo?</p>
-</div>
+::: card-title
+Detectar
+:::
 
-<div class="brand-card blue">
-<div class="card-number">02</div>
-<div class="card-title">Estimar</div>
-<p>¿Cuántas necesito para estimar prevalencia con precisión?</p>
-</div>
+<p>*¿Cuántas muestras necesito para encontrar al menos un positivo?*</p>
+:::::
 
-<div class="brand-card green">
-<div class="card-number">03</div>
-<div class="card-title">Comparar</div>
-<p>¿Cuántas necesito para detectar diferencias entre grupos?</p>
-</div>
+::::: {.brand-card .blue}
+::: card-number
+02
+:::
 
-<div class="brand-card blue">
-<div class="card-number">04</div>
-<div class="card-title">Seleccionar</div>
-<p>Una vez definido n: ¿qué unidades entrarán realmente en la muestra?</p>
-</div>
+::: card-title
+Estimar
+:::
 
-</div>
+<p>*¿Cuántas necesito para estimar prevalencia con precisión?*</p>
+:::::
 
----
+::::: {.brand-card .green}
+::: card-number
+03
+:::
+
+::: card-title
+Comparar
+:::
+
+<p>*¿Cuántas necesito para detectar diferencias entre grupos?*</p>
+:::::
+
+::::: {.brand-card .blue}
+::: card-number
+04
+:::
+
+::: card-title
+Seleccionar
+:::
+
+<p>Una vez definido **n**: *¿qué unidades entrarán realmente en la muestra?*</p>
+:::::
+:::::::::::::::
+
+
+::: {style="text-align:center; margin-top: 0.6rem;"}
+```{=html}
+<img
+    src="../_assets/figures/muestreo.png"
+    alt="Ruta del script: detectar, estimar, comparar y seleccionar"
+    style="width:100%; max-width:1600px;">
+```
+:::
+
+------------------------------------------------------------------------
 
 ## El cálculo empieza antes que R
 
-<div class="brand-note">
-<strong>El tamaño de muestra es una consecuencia del objetivo inferencial.</strong>
+::: {.brand-note style="text-align:center;margin-bottom: 1.5rem;"}
+<strong>El tamaño de muestra es una consecuencia del objetivo inferencial.</strong> 
+<br>Un <strong>"n"</strong> grande no corrige por sí mismo sesgo, pseudorreplicación ni mala selección.
+:::
+
+<div style="text-align:center; margin: 0.8rem 0 2rem 0;">
+<p><em>Por ello, antes de calcular <strong>n</strong>, debemos definir qué queremos demostrar con la muestra: <br><strong>detectar</strong> presencia, <strong>estimar</strong> una prevalencia o <strong>comparar</strong> grupos.</em></p>
 </div>
 
-<div class="brand-grid three">
+
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+Presencia
+:::
+
+<p>Maximizar la **probabilidad** de observar ≥1 positivo.</p>
+::::
+
+:::: {.brand-card .blue}
+::: card-title
+Prevalencia
+:::
+
+<p>Controlar la **incertidumbre** alrededor de una proporción.</p>
+::::
+
+:::: {.brand-card .green}
+::: card-title
+Comparación
+:::
+
+<p>Alcanzar **potencia** suficiente para identificar una diferencia.</p>
+::::
+:::::::::
+
+<div style="text-align:center;">
+<em>“La pregunta cambia el criterio de cálculo”</em>
+</div>
+
+------------------------------------------------------------------------
+
+## Detección de presencia {.section-slide .no-underline}
+
+::: section-subtitle
+Del supuesto de **prevalencia** a una **probabilidad** explícita de **detección**.
+:::
+
+------------------------------------------------------------------------
+
+## Antes de calcular
+
+En un estudio orientado a **detectar la presencia** de un patógeno, normalmente desconocemos la **prevalencia real** de la población antes de muestrear. Por lo tanto, para el **diseño del muestreo** establecemos una: 
+
+::: equation-panel 
+$$ 
+p = \text{prevalencia mínima de diseño} 
+$$
+:::
+
+<div class="brand-grid three"> 
+<div class="brand-card green"> 
+<div class="card-title">No es</div> 
+<p>La <strong>prevalencia real</strong> de la población, porque todavía no la conocemos.</p> 
+</div> 
+
+<div class="brand-card blue"> 
+<div class="card-title">Sí es</div> 
+<p>Un valor definido <em><strong>a priori</strong></em> para planificar el esfuerzo de muestreo.</p> 
+</div> 
+
+<div class="brand-card green"> 
+<div class="card-title">Determina</div> 
+<p>Cuántas unidades necesitamos examinar para alcanzar una <strong>probabilidad de detección</strong> determinada.</p> </div> 
+</div>
+
+::: brand-note
+<strong>Ejemplo:</strong> elegir **$p=0.10$** significa diseñar el estudio para tener una alta probabilidad de **detectar al patógeno** si está presente en al menos el **10%** de la población.
+:::
+
+------------------------------------------------------------------------
+
+## Fundamentos para la detección
+
+Si la **prevalencia mínima de diseño** es **$p$**, entonces la **probabilidad** de que **una muestra** seleccionada sea **negativa** es:
+
+$$ 
+1-p 
+$$ 
+
+Por regla de **independencia** —*es decir, que el resultado de una muestra no afecta al de otra*— la probabilidad de que **todas las muestras resulten negativas** se expresa como:
+
+$$ 
+(1-p)\times(1-p)\times\cdots\times(1-p) \qquad (n\ \text{veces}) 
+$$ 
+
+Lo cual se simplifica en: 
+$$ 
+(1-p)^n 
+$$
+
+::: {.brand-note style="text-align:center;margin-bottom: 1.5rem;"}
+<em>Elevar a la **$n$** significa que la misma **probabilidad de fallo** se **repite** en **cada intento independiente**.</em>
+:::
+
+------------------------------------------------------------------------
+
+## Probabilidad de detección
+
+El supuesto de **independencia** $(1-p)^n$ nos permite determinar la **probabilidad de no detectar** al agente patógeno en una muestra, en función de un nivel de **prevalencia de diseño**.
+
+<div style="text-align:center; margin: 2rem 2rem 2rem 0;">
+<em><strong>Ejemplo:</strong> Con una prevalencia de diseño del 30% ($p = 0.30$) y 3 individuos examinados ($n = 3$)</em>
+</div>
+
+::: equation-panel
+$$
+P(\text{no detectar})=(1-p)^n = (1-0.30)^3 = 0.343
+$$
+:::
+
+Tenemos un **34.3%** de probabilidad de **no detectar** al agente patógeno. 
+
+<div style="text-align:center; margin: 2rem 2rem 2rem 0;">
+<em>Por el principio de <strong>complementariedad</strong>, la probabilidad de <strong>detectar al menos un positivo</strong> es:</em>
+</div>
+
+::: equation-panel
+$$
+P(\text{al menos un positivo}) = 1-P(\text{no detectar}) = (1-0.343) = 0.657
+$$
+:::
+
+Por lo tanto, tenemos un **65.7%** de probabilidad de **detectar** al menos **un positivo**.
+
+------------------------------------------------------------------------
+
+## De probabilidad de detección a tamaño de muestra 
+
+Hasta ahora hemos respondido esta pregunta:
+
+::: equation-panel 
+$$ 
+\text{Si conozco } p \text{ y } n,\quad \text{¿cuál es mi probabilidad de detectar al menos un positivo?} 
+$$
+:::
+
+Pero en el diseño de muestreo normalmente necesitamos resolver el problema al revés:
+
+::: {.brand-note style="text-align:center;margin-bottom: 1.5rem;"}
+¿Cuántas muestras debo examinar para alcanzar una <strong>probabilidad de detección</strong> previamente definida?
+:::
+
+Si queremos que la **probabilidad de detectar** al menos **un positivo** sea igual a un **nivel de confianza** **$(NC)$** deseado, entonces establecemos lo siguiente:
+
+::: equation-panel
+$$ P(\text{al menos un positivo}) = 1-P(\text{no detectar}) = NC $$ 
+:::
+
+<div style="text-align:center; margin-top:1.2rem;"> 
+<em>
+Ahora conocemos <strong>**$p$**</strong> y fijamos <strong>**$NC$**</strong> y la incógnita pasa a ser <strong>**$n$**</strong>: el número de muestras necesarias.
+</em>
+</div> 
+
+------------------------------------------------------------------------
+
+## Despejando la incógnita "**$n$**"
+
+Sabemos que la probabilidd de **no detectar ningún positivo** en **$n$** muestras **independientes** es **$(1-p)^n$**.
+
+Si queremos una **probabilidad de detección igual** a un **nivel de confianza** **$(NC)$**, entonces, por **complementariedad**, la probabilidad de **no detectar ningún positivo** debe ser igual a **$1-NC$** 
+
+Por lo tanto:
+
+::: equation-panel
+$$
+(1-p)^n = 1 - NC
+$$
+:::
+
+Para encontrar el **tamaño de muestra** **$n$**, aplicamos **logaritmo natural** $(ln)$ a ambos lados y utilizamos la propiedad $\ln(a^n)=n\ln(a)$:
+
+::: equation-panel
+$$
+n\ln(1-p) = ln(1 - NC)
+$$
+:::
+
+<div style="text-align:center; margin:1.2rem 0;"> 
+<em>El logaritmo natural <strong>(ln)</strong> aparece porque es la <strong>herramienta matemática</strong> para <strong>“despejar”</strong> el exponente <strong>n</strong> cuando trabajamos con potencias</em>
+</div>
+
+------------------------------------------------------------------------
+
+## Detectar con Nivel de Confianza
+
+Así, para un **nivel de confianza** **($NC$)** deseado del **95%** y una **prevalencia de diseño** **($p$)** del **30%**, el tamaño de muestra **($n$)** se calcula aplicando:
+
+::: equation-panel
+$$n=\frac{\ln(1-NC)}{\ln(1-p)} = \frac{\ln(1-0.95)}{\ln(1-0.30)} = \frac{\ln(0.05)}{\ln(0.70)} \approx 8.399$$
+:::
+
+Donde $p=0.30$ y $NC=0.95$
+
+Como el tamaño de muestra debe expresarse en unidades completas, el resultado se redondea hacia arriba:
+
+::: {.brand-note style="text-align:center;margin-bottom: 1.5rem;"}
+<strong>$n = 9$ individuos</strong>
+:::
+
+**La interpretación es la siguiente**: *Con una prevalencia mínima de diseño de $0.30$ y un nivel de confianza del $0.95$, necesitamos examinar al menos **9 individuos** para alcanzar una **probabilidad de detección** de por lo menos el **95%**, bajo los **supuestos del modelo**.*
+
+------------------------------------------------------------------------
+
+## Supuestos del modelo
+
+Para que la fórmula de detección sea válida, debemos asumir:
+
+<div class="brand-grid four">
 
 <div class="brand-card green">
-<div class="card-title">Presencia</div>
-<p>Maximizar la probabilidad de observar ≥1 positivo.</p>
+<div class="card-title">Detección perfecta</div>
+<p>Si un individuo está infectado, lo detectamos. Se asume ausencia de errores de clasificación: <br><strong>\(Se = Sp = 1\)</strong>.</p>
 </div>
 
 <div class="brand-card blue">
-<div class="card-title">Prevalencia</div>
-<p>Controlar la incertidumbre alrededor de una proporción.</p>
+<div class="card-title">Independencia</div>
+<p>El estado o resultado de una unidad <strong>no modifica</strong> el de las demás.</p>
 </div>
 
 <div class="brand-card green">
-<div class="card-title">Comparación</div>
-<p>Alcanzar potencia suficiente para identificar una diferencia.</p>
+<div class="card-title">Probabilidad constante</div>
+<p>Cada unidad tiene la misma probabilidad <strong>\(p\)</strong> de estar infectada.</p>
 </div>
 
+<div class="brand-card blue">
+<div class="card-title">Muestreo representativo</div>
+<p>Las unidades examinadas representan razonablemente a la <strong>población objetivo</strong>.</p>
+</div>
 </div>
 
-No existe un único valor de **n** correcto para las tres preguntas.
-
----
-
-## 01 · Detección de presencia {.section-slide .no-underline}
-
-<div class="section-subtitle">Del supuesto de prevalencia a una probabilidad explícita de detección.</div>
-
----
-
-## Detectar al menos un positivo
-
-Si la prevalencia mínima de diseño es $p$ y las unidades son independientes:
-
-<div class="equation-panel">
-
-$$
-P(\text{no detectar})=(1-p)^n
-$$
-
-</div>
-
-Para una confianza deseada $NC$:
-
-<div class="equation-panel">
-
-$$
-n=\frac{\ln(1-NC)}{\ln(1-p)}
-$$
-
-</div>
-
-Con $p=0.10$ y $NC=0.95$:
-
-<div class="brand-note">
-<strong>n ≈ 29 individuos</strong>
-</div>
-
----
+------------------------------------------------------------------------
 
 ## La sensibilidad modifica el esfuerzo
 
-La prueba puede no detectar a todos los individuos infectados.
+Sin embargo, **una prueba** puede **no detectar** a todos los **individuos infectados**. Si mantenemos una **prevalencia de diseño** del **10%** **$(p=0.10)$** y un **nivel de confianza** del **95%** **$(NC=0.95)$**, podemos comparar dos escenarios:
 
-<div class="equation-panel">
+::::::: {.brand-grid .two}
 
+:::: {.brand-card .green}
+
+::: card-title
+Prueba perfecta: $Se=1$
+:::
+
+::::: {style="font-size:18px;"}
+
+La probabilidad de detección por unidad coincide con la prevalencia de diseño:
+
+::: equation-panel
 $$
-P_{efectiva}\approx p\times Se
+p_{\text{efectiva}} = p
 $$
+:::
 
+Por tanto, la probabilidad de **no detectar ningún positivo** es:
+
+::: equation-panel
+$$
+P(\text{no detectar})=(1-p)^n
+$$
+:::
+
+:::::
+
+::::
+
+
+:::: {.brand-card .blue}
+
+::: card-title
+Prueba imperfecta: $Se<1$
+:::
+
+::::: {style="font-size:18px;"}
+
+La probabilidad de detección por unidad disminuye según la sensibilidad:
+
+::: equation-panel
+$$
+p_{\text{efectiva}} \approx p\times Se
+$$
+:::
+
+Por tanto, la probabilidad de **no detectar ningún positivo** pasa a ser:
+
+::: equation-panel
+$$
+P(\text{no detectar})=(1-p_{\text{efectiva}})^n
+$$
+:::
+
+:::::
+
+::::
+
+:::::::
+
+------------------------------------------------------------------------
+
+## Efecto de la sensibilidad en "$n$"
+
+<div style="text-align:center; margin:1.5rem 0;">
+<em>Al disminuir la **sensibilidad** **$(Se)$**, disminuye la **probabilidad efectiva** de **detectar** una unidad positiva y **aumenta** el **tamaño de muestra** necesario.</em>
 </div>
 
-<div class="brand-grid two">
+Al sustituir cada **parámetro** en el escenario correspondiente, **estimamos** distintos **tamaños de muestra** **($n$)**: 
 
-<div class="brand-card green">
-<div class="card-title">Se = 1.00</div>
-<p>p = 0.10 → n ≈ <strong>29</strong></p>
-</div>
+::::::: {.brand-grid .two}
 
-<div class="brand-card blue">
-<div class="card-title">Se = 0.70</div>
-<p>p efectiva = 0.07 → n ≈ <strong>42</strong></p>
-</div>
+:::: {.brand-card .green}
 
-</div>
+::: card-title
+Con $Se=1$
+:::
 
-<div class="brand-note">Un resultado negativo sólo es informativo en relación con el diseño y la capacidad de detección.</div>
+::::: {style="font-size:18px;"}
 
----
+::: equation-panel
+$$
+n=\frac{\ln(1-NC)}{\ln(1-p)}
+=
+\frac{\ln(1-0.95)}{\ln(1-0.10)}
+\approx 28.43
+$$
+:::
 
-## Del cálculo manual a `epiR`
+<p style="text-align:center;"><strong>n = 29 individuos</strong></p>
+
+:::::
+
+::::
+
+
+:::: {.brand-card .blue}
+
+::: card-title
+Con $Se=0.70$
+:::
+
+::::: {style="font-size:18px;"}
+
+::: equation-panel
+$$
+n=\frac{\ln(1-NC)}{\ln(1-p_{\text{efectiva}})}
+=
+\frac{\ln(1-0.95)}{\ln(1-0.10\times0.70)}
+\approx 41.28
+$$
+:::
+
+<p style="text-align:center;"><strong>n = 42 individuos</strong></p>
+
+:::::
+
+::::
+
+:::::::
+
+Donde $p = 0.10$, $NC = 0.95$ y $p_{\text{efectiva}} \approx p\times Se$.
+
+------------------------------------------------------------------------
+
+## Del cálculo manual a `R`
 
 Primero hacemos visible el razonamiento:
 
-```r
-n <- ceiling(
-  log(1 - 0.95) / log(1 - 0.10 * 0.70)
+:::: {.brand-card .blue}
+
+::: card-title
+Con $Se=0.70$
+:::
+
+::::: {style="font-size:18px;"}
+
+::: equation-panel
+$$
+n=\frac{\ln(1-NC)}{\ln(1-p_{\text{efectiva}})}
+=
+\frac{\ln(1-0.95)}{\ln(1-0.10\times0.70)}
+\approx 41.28
+$$
+:::
+
+<p style="text-align:center;"><strong>n = 42 individuos</strong></p>
+
+:::::
+
+::::
+
+<div style="margin-bottom:1.5rem;"></div>
+
+``` r
+n <- ceiling(                            # redondeo hacia arriba
+  log(1 - 0.95) / log(1 - 0.10 * 0.70)   # ln(1 - NC) / ln(1 - p * Se)
 )
-# 42
+# NC = 0.95, p = 0.10, Se = 0.70
+# n  = 42
 ```
 
-Después usamos una función especializada:
+------------------------------------------------------------------------
 
-```r
+## Función especializada
+
+Después, con el paquete `epiR` utilizamos una **función** para poblaciones **finitas** o **infinitas**:
+
+``` r
 epiR::epi.ssdetect(
-  N = 1000,
-  prev = 0.10,
-  se = 0.70,
-  sp = 1.00,
-  finite.correction = FALSE,
-  conf.level = 0.95
+  N = NA,       # población infinita (desconocida), qué pasa si es finita? N = 100
+  pstar = 0.10, # prevalencia mínima de diseño
+  se = 0.70,    # sensibilidad de la prueba
+  sp = 1.00,    # especificidad de la prueba
+  ss.se = 0.95  # probabilidad de detección deseada (Nivel de Confianza)
 )
 ```
 
-<div class="brand-note"><strong>Regla:</strong> el paquete automatiza el cálculo; no decide la pregunta ni valida los supuestos por nosotros.</div>
 
----
+**Regla:** el paquete **automatiza el cálculo**; pero **no** decide la pregunta ni valida los supuestos por nosotros.
 
-## 02 · Estimación de prevalencia {.section-slide .no-underline}
+------------------------------------------------------------------------
 
-<div class="section-subtitle">Detectar presencia y estimar una proporción son objetivos distintos.</div>
+## Estimación de prevalencia {.section-slide .no-underline}
 
----
+::: section-subtitle
+**Detectar** *presencia* y **estimar** una **proporción** son **objetivos distintos**.
+:::
+
+------------------------------------------------------------------------
 
 ## Precisión: ¿qué tan estrecho debe ser el intervalo?
 
-Para estimar prevalencia podemos fijar el ancho deseado del intervalo de confianza.
+Para estimar prevalencia podemos fijar el ancho deseado del intervalo de
+confianza.
 
-```r
+``` r
 presize::prec_prop(
-  p = 0.10,
-  conf.width = 0.10,
-  conf.level = 0.95,
-  method = "wilson"
+  p = 0.10,           # prevalencia de diseño
+  conf.width = 0.10,  # ancho total del IC
+  conf.level = 0.95,  # nivel de confianza
+  method = "wilson"   # método de Wilson para proporciones
 )
 ```
 
-<div class="brand-grid two">
+::::::: {.brand-grid .two}
+:::: {.brand-card .green}
+::: card-title
+p esperada
+:::
 
-<div class="brand-card green">
-<div class="card-title">p esperada</div>
-<p>Valor de diseño basado en evidencia previa o escenario conservador.</p>
-</div>
+<p>Valor de diseño basado en evidencia previa o escenario
+conservador.</p>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">Precisión</div>
-<p><code>conf.width = 0.10</code> equivale a un ancho total de 10 puntos porcentuales.</p>
-</div>
+:::: {.brand-card .blue}
+::: card-title
+Precisión
+:::
 
-</div>
+<p><code>conf.width = 0.10</code> equivale a un ancho total de 10 puntos
+porcentuales.</p>
+::::
+:::::::
 
-<div class="brand-note">Un margen de ±5% corresponde a un ancho completo del IC de 10%.</div>
+::: brand-note
+Un margen de ±5% corresponde a un ancho completo del IC de 10%.
+:::
 
----
+------------------------------------------------------------------------
 
 ## Prevalencia observada ≠ prevalencia verdadera
 
-Ejemplo: 18 positivos de 100 animales.
+Ejemplo: 18 positivos observados [AP] de 100 animales [N].
 
-<span class="pill">AP = 0.18</span>
-<span class="pill blue">Se = 0.90</span>
-<span class="pill">Sp = 0.95</span>
+[AP = 0.18]{.pill} [Se = 0.90]{.pill .blue} [Sp = 0.95]{.pill}
 
-<div class="equation-panel">
+::: equation-panel
+$$TP=\frac{AP+Sp-1}{Se+Sp-1}$$
+:::
 
-$$
-TP=\frac{AP+Sp-1}{Se+Sp-1}
-$$
-
-</div>
-
-```r
-epiR::epi.prev(
-  pos = 18,
-  tested = 100,
-  se = 0.90,
-  sp = 0.95
+``` r
+epiR::epi.prev( # ajuste de prevalencia aparente
+  pos = 18,     # número de positivos observados [AP]
+  tested = 100, # número de individuos examinados [N] 
+  se = 0.90,    # sensibilidad de la prueba
+  sp = 0.95     # especificidad de la prueba
 )
 ```
 
-<div class="brand-note">La medición diagnóstica forma parte de la inferencia epidemiológica.</div>
+::: brand-note
+La medición diagnóstica forma parte de la inferencia epidemiológica.
+:::
 
----
+------------------------------------------------------------------------
 
-## 03 · Comparar grupos {.section-slide .no-underline}
+## Comparar grupos {.section-slide .no-underline}
 
-<div class="section-subtitle">Cuando la pregunta cambia, también cambia el cálculo de n.</div>
+::: section-subtitle
+Cuando la **pregunta cambia**, también **cambia el cálculo** de **$n$**.
+:::
 
----
+------------------------------------------------------------------------
 
 ## Potencia para dos proporciones
 
-Supongamos una comparación de 10% frente a 20%.
+Supongamos una comparación del 10% frente al 20% de prevalencia de diseño.
 
-```r
-h <- pwr::ES.h(0.10, 0.20)
+``` r
+h <- pwr::ES.h(0.10, 0.20) # efecto estandarizado
+# pwr::ES.h() transforma la diferencia en un tamaño de efecto
 
-pwr::pwr.2p.test(
-  h = h,
-  n = NULL,
-  sig.level = 0.05,
-  power = 0.80,
-  alternative = "two.sided"
+pwr::pwr.2p.test(           # test tamaño de muestra para comparar dos proporciones
+  h = h,                    # efecto estandarizado
+  n = NULL,                 # tamaño de muestra por grupo (desconocido)
+  sig.level = 0.05,         # alfa: 5% de riesgo de falso positivo inferencial
+  power = 0.80,             # potencia = 1-beta = 0.80; por tanto, beta = 0.20
+  alternative = "two.sided" # prueba bilateral (dos colas)
 )
 ```
+<div style="text-align:center;">
+<em>El tamaño de muestra necesario depende de tres decisiones</em>
+</div>
 
-<div class="brand-grid three">
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+α
+:::
 
-<div class="brand-card green">
-<div class="card-title">α</div>
 <p>Riesgo de falso positivo inferencial.</p>
-</div>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">1 − β</div>
+:::: {.brand-card .blue}
+::: card-title
+1 − β
+:::
+
 <p>Potencia para detectar el efecto especificado.</p>
-</div>
+::::
 
-<div class="brand-card green">
-<div class="card-title">Efecto</div>
+:::: {.brand-card .green}
+::: card-title
+Efecto
+:::
+
 <p>Diferencia biológicamente relevante entre proporciones.</p>
+::::
+:::::::::
+
+------------------------------------------------------------------------
+
+## α, β y potencia: ¿qué estamos controlando?
+
+::: {.callout-note title="Nota"}
+En una **comparación estadística** existen **dos** formas principales de **errores**, **tipo I y II**. 
+:::
+
+::::::::: {.brand-grid .three}
+
+::::::: {style="display:flex; flex-direction:column;"}
+
+:::: {.brand-card .green style="flex:1;"}
+::: card-title
+$\alpha = 0.05$
+:::
+
+<p><strong>Error tipo I</strong></p>
+
+<p><strong>5%</strong> de riesgo de <strong>concluir</strong> que existe una diferencia entre los grupos cuando, en realidad, <strong>no existe</strong>.</p>
+::::
+
+:::::::
+
+::::::: {style="display:flex; flex-direction:column;"}
+
+:::: {.brand-card .blue style="flex:1;"}
+::: card-title
+$\beta = 0.20$
+:::
+
+<p><strong>Error tipo II</strong></p>
+
+<p><strong>20%</strong> de riesgo de <strong>no detectar</strong> la diferencia especificada aun cuando <strong>realmente existe</strong>.</p>
+::::
+
+:::::::
+
+::::::: {style="display:flex; flex-direction:column;"}
+
+:::: {.brand-card .green style="flex:1;"}
+::: card-title
+$1-\beta = 0.80$
+:::
+
+<p><strong>Potencia estadística</strong></p>
+
+<p><strong>80%</strong> de <strong>probabilidad de detectar</strong> la diferencia especificada cuando <strong>realmente existe</strong>.</p>
+::::
+
+:::::::
+
+:::::::::
+
+*El diseño del estudio intenta controlar ambos **errores (α, β)** antes de recolectar los datos.* 
+La **potencia** mide qué tan buena es la prueba para **rechazar** la hipótesis nula **$(H_0)$** cuando la diferencia especificada realmente existe.
+
+<div style="text-align:center; margin:1.5rem 0;">
+<em>$H_0: \mu_1 = \mu_2$ *(no hay diferencias)* - $H_A: \mu_1 \neq \mu_2$ *(existen diferencias)*</em>
 </div>
 
-</div>
 
----
+------------------------------------------------------------------------
 
-## 04 · Selección de unidades {.section-slide .no-underline}
+## La lógica de α, β y 1-β
+De forma práctica, la **tríada** la podremos interpretar como:
 
-<div class="section-subtitle">Calcular n no determina cuáles unidades formarán la muestra.</div>
+::::::::: {.brand-grid .three}
 
----
+::::::: {style="display:flex; flex-direction:column;"}
+
+:::: {.brand-card .green style="flex:1;"}
+::: card-title
+$\alpha = 0.05$
+:::
+
+<p><strong>Error tipo I</strong></p>
+
+<p>**Concluyo** una diferencia que en realidad <strong>no existe</strong>.</p>
+::::
+
+::: {style="text-align:center; margin-top:0.7rem; font-size:18px;"}
+**Falso positivo**
+:::
+
+:::::::
+
+
+::::::: {style="display:flex; flex-direction:column;"}
+
+:::: {.brand-card .blue style="flex:1;"}
+::: card-title
+$\beta = 0.20$
+:::
+
+<p><strong>Error tipo II</strong></p>
+
+<p>**No detecto** una diferencia que en realidad <strong>sí existe</strong>.</p>
+::::
+
+::: {style="text-align:center; margin-top:0.7rem; font-size:18px;"}
+**Falso negativo**
+:::
+
+:::::::
+
+
+::::::: {style="display:flex; flex-direction:column;"}
+
+:::: {.brand-card .green style="flex:1;"}
+::: card-title
+$1-\beta = 0.80$
+:::
+
+<p><strong>Potencia estadística</strong></p>
+
+<p>Tengo <strong>80%</strong> de probabilidad de **detectar** esa diferencia **si realmente existe**.</p>
+::::
+
+::: {style="text-align:center; margin-top:0.7rem; font-size:18px;"}
+**Potencia**
+:::
+
+:::::::
+
+:::::::::
+
+::: {.callout-important title="Importante"}
+En este contexto, **“falso positivo”** y **“falso negativo”** describen **errores inferenciales** y 
+no los resultados erróneos de una **prueba diagnóstica**.
+:::
+
+------------------------------------------------------------------------
+
+## Selección de unidades {.section-slide .no-underline}
+
+::: section-subtitle
+Calcular **$n$** no determina **cuáles unidades** formarán la muestra.
+:::
+
+------------------------------------------------------------------------
 
 ## De “¿cuántas?” a “¿cuáles?”
 
 ### Aleatorio simple
 
-```r
-seleccion <- sampling::srswor(
-  n = 10,
-  N = 20
+``` r
+seleccion <- sampling::srswor( # muestreo aleatorio simple sin reemplazo
+  n = 10,                      # tamaño de la muestra
+  N = 20                       # tamaño de la población
 )
 ```
 
 ### Estratificado
 
-```r
-sampling::strata(
-  data = marco,
-  stratanames = "estrato_id",
-  size = c(4, 3, 3),
-  method = "srswor"
+``` r
+sampling::strata(              # muestreo estratificado
+  data = marco,                # marco de muestreo
+  stratanames = "estrato_id",  # variable de estratificación
+  size = c(4, 3, 3),           # tamaño de muestra por estrato
+  method = "srswor"            # método de selección: aleatorio simple sin reemplazo
 )
 ```
 
-<div class="brand-note">La representatividad depende del marco accesible, del mecanismo de selección y de la escala de inferencia.</div>
+::: brand-note
+La **representatividad** depende del **marco accesible**, del **mecanismo de
+selección** y de la **escala de inferencia**.
+:::
 
----
+------------------------------------------------------------------------
 
 ## Paquetes: una herramienta para cada pregunta
 
 | Pregunta | Paquete / función | Decisión que facilita |
-|---|---|---|
+|------------------------|------------------------|------------------------|
 | Detectar presencia | `epiR::epi.ssdetect()` | n para detectar ≥1 evento |
 | Estimar prevalencia | `presize::prec_prop()` | n según precisión deseada |
 | Ajustar prevalencia | `epiR::epi.prev()` | AP → prevalencia ajustada |
@@ -335,123 +837,195 @@ sampling::strata(
 | Elegir unidades | `sampling::srswor()` / `strata()` | selección probabilística |
 | Organizar escenarios | `tidyverse` | tablas, gráficos y comparación |
 
-<div class="brand-note">El paquete correcto depende de la <strong>pregunta</strong>, no de cuál función sea más fácil de ejecutar.</div>
+::: brand-note
+El paquete correcto depende de la <strong>pregunta</strong>, no de cuál
+función sea más fácil de ejecutar.
+:::
 
----
+------------------------------------------------------------------------
 
-## Caso integrador · Bd en 20 humedales
+## Caso de *Batrachohcytrium dendrobatidis* **(Bd)** en 20 humedales
 
-Disponemos de **150 hisopos**.
+Disponemos de **150 hisopados** cutáneos.
 
-<div class="brand-grid three">
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+Diseño A
+:::
 
-<div class="brand-card green">
-<div class="card-title">Diseño A</div>
-<p><strong>5 sitios × 30</strong><br>Alta intensidad dentro de sitio.</p>
-</div>
+<p><strong>5 sitios × 30 hisopos</strong>
+<br>Mayor intensidad de muestreo por sitio, pero menor replicación espacial.</p>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">Diseño B</div>
-<p><strong>10 sitios × 15</strong><br>Compromiso entre escalas.</p>
-</div>
+:::: {.brand-card .blue}
+::: card-title
+Diseño B
+:::
 
-<div class="brand-card green">
-<div class="card-title">Diseño C</div>
-<p><strong>15 sitios × 10</strong><br>Mayor replicación espacial.</p>
-</div>
+<p><strong>10 sitios × 15 hisopos</strong>
+<br>Equilibrio entre intensidad y cobertura.</p>
+::::
 
-</div>
+:::: {.brand-card .green}
+::: card-title
+Diseño C
+:::
 
-<div class="brand-note">Los tres usan 150 hisopos; no sostienen necesariamente la misma inferencia regional.</div>
+<p><strong>15 sitios × 10 hisopos</strong>
+<br>Mayor replicación espacial, pero menor intensidad por sitio.</p>
+::::
+:::::::::
 
----
+::: {.callout-tip title="tip"}
+Los tres usan **150 hisopos**; no sostienen necesariamente la misma
+inferencia regional.
+:::
+
+------------------------------------------------------------------------
+
+## Comparación de diseños de muestreo 
+
+::: {style="text-align:center; margin-top: 0.0rem;"}
+```{=html}
+<img
+    src="../_assets/figures/muestreo-bd.png"
+    alt=""
+    style="width:90%; max-width:1200px;">
+```
+:::
+
+------------------------------------------------------------------------
 
 ## ¿Qué cambia entre A, B y C?
 
-<div class="brand-grid three">
+::::::::: {.brand-grid .three}
+:::: {.brand-card .green}
+::: card-title
+Dentro del sitio
+:::
 
-<div class="brand-card green">
-<div class="card-title">Dentro del sitio</div>
-<p>Más individuos elevan la oportunidad de detectar prevalencias bajas localmente.</p>
-</div>
+<p>Más individuos elevan la oportunidad de detectar prevalencias bajas
+localmente.</p>
+::::
 
-<div class="brand-card blue">
-<div class="card-title">Entre sitios</div>
+:::: {.brand-card .blue}
+::: card-title
+Entre sitios
+:::
+
 <p>Más humedales representan mejor heterogeneidad espacial.</p>
-</div>
+::::
 
-<div class="brand-card green">
-<div class="card-title">Inferencia</div>
+:::: {.brand-card .green}
+::: card-title
+Inferencia
+:::
+
 <p>La unidad independiente debe coincidir con la afirmación final.</p>
-</div>
-
-</div>
+::::
+:::::::::
 
 ### Pregunta para defender el diseño
 
-> ¿Queremos afirmar algo sobre individuos de un humedal o sobre la ocurrencia de Bd en la región?
+> ¿Queremos afirmar algo sobre **individuos** de un **humedal** o sobre la
+> **ocurrencia** de **Bd** en la **región**?
 
----
+------------------------------------------------------------------------
 
 ## Flujo recomendado
 
-<div class="brand-grid four">
+::::::::::::::: {.brand-grid .four}
+::::: {.brand-card .green}
+::: card-number
+1
+:::
 
-<div class="brand-card green">
-<div class="card-number">1</div>
-<div class="card-title">Definir</div>
+::: card-title
+Definir
+:::
+
 <p>Población, estimando y escala.</p>
-</div>
+:::::
 
-<div class="brand-card blue">
-<div class="card-number">2</div>
-<div class="card-title">Suponer</div>
+::::: {.brand-card .blue}
+::: card-number
+2
+:::
+
+::: card-title
+Suponer
+:::
+
 <p>p, Se/Sp, precisión o efecto.</p>
-</div>
+:::::
 
-<div class="brand-card green">
-<div class="card-number">3</div>
-<div class="card-title">Calcular</div>
+::::: {.brand-card .green}
+::: card-number
+3
+:::
+
+::: card-title
+Calcular
+:::
+
 <p>n y sensibilidad a escenarios.</p>
-</div>
+:::::
 
-<div class="brand-card blue">
-<div class="card-number">4</div>
-<div class="card-title">Seleccionar</div>
+::::: {.brand-card .blue}
+::: card-number
+4
+:::
+
+::: card-title
+Seleccionar
+:::
+
 <p>Unidades con un mecanismo defendible.</p>
-</div>
+:::::
+:::::::::::::::
 
-</div>
+::: {.brand-note style="text-align:center;margin-bottom: 1.5rem;"}
+<em><strong>Pregunta → supuestos → n → selección → inferencia.</strong></em>
+:::
 
-<div class="brand-note"><strong>Pregunta → supuestos → n → selección → inferencia.</strong></div>
-
----
+------------------------------------------------------------------------
 
 ## Script de apoyo
 
-```text
+``` text
 scripts/02b_diseno-muestreo-vigilancia.R
 ```
 
 El script reproduce:
 
-- cálculo manual de detección;
-- detección imperfecta;
-- escenarios de sensibilidad;
+- Cálculo manual de detección;
+- Detección imperfecta;
+- Escenarios de sensibilidad;
 - `epiR`, `presize` y `pwr`;
-- muestreo aleatorio simple y estratificado;
-- caso integrador de 20 humedales y 150 hisopos;
-- exportación de tablas, figura y `sessionInfo()`.
+- Muestreo aleatorio simple y estratificado;
+- Caso de **Bd** en 20 humedales y 150 hisopos;
+- Exportación de tablas, figura y `sessionInfo()`.
 
-<div class="brand-note">Objetivo final: que R ayude a <strong>defender decisiones metodológicas</strong>, no sólo a producir un número.</div>
+::: brand-note
+**Objetivo final:** que `R` ayude a <strong>defender decisiones
+metodológicas</strong>, no sólo a producir un número.
+:::
 
----
+------------------------------------------------------------------------
 
 ## Referencias esenciales
 
-- Foufopoulos, J., Wobeser, G. A., & McCallum, H. (2022). *Infectious Disease Ecology and Conservation*. Oxford University Press. Cap. 4.
-- Fosgate, G. T. (2009). Practical sample size calculations for surveillance and diagnostic investigations. *Journal of Veterinary Diagnostic Investigation*, 21, 3–14.
-- Mosher, B. A., et al. (2017, 2019). Diseños y modelos para detección y ocurrencia de patógenos de anfibios.
+- Foufopoulos, J., Wobeser, G. A., & McCallum, H. (2022). *Infectious
+  Disease Ecology and Conservation*. Oxford University Press. Cap. 4.
+- Fosgate, G. T. (2009). Practical sample size calculations for
+  surveillance and diagnostic investigations. *Journal of Veterinary
+  Diagnostic Investigation*, 21, 3–14.
+- Mosher, B. A., et al. (2017, 2019). Diseños y modelos para detección y
+  ocurrencia de patógenos de anfibios.
 - Documentación CRAN: `epiR`, `presize`, `sampling` y `pwr`.
 
-<div class="small-source">Material complementario a M2 — Diseño de Muestreo · Ecología de Enfermedades I.</div>
+::: small-source
+Material complementario a M2 — Diseño de Muestreo · Ecología de
+Enfermedades I.
+:::
