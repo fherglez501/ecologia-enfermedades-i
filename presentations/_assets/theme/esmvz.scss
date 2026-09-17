@@ -308,7 +308,7 @@ section:not(#title-slide) {
   padding-left:
     var(--slide-padding-x) !important;
 
-  overflow: visible;
+  overflow: hidden;
 }
 
 // =================================
@@ -1304,7 +1304,7 @@ div.sourceCode
   color:
     $esmvz-gray;
 
-  font-size: 30px;
+  font-size: 32px;
 
   line-height: 1.22;
 }
