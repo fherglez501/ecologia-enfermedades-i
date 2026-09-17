@@ -21,3 +21,6 @@ outputs/figures/*
 outputs/*_sessionInfo.txt
 
 /.quarto/
+
+# ignorar carpetas
+data/raw/Bd
