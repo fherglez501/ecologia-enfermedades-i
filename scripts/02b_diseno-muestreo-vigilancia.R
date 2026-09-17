@@ -58,27 +58,44 @@ escenarios
 # 02. Detectar presencia: cálculo transparente --------------------------------
 
 # P(no detectar) = (1 - p)^n
-# n = ln(1 - NC) / ln(1 - p)
+# Fórmula de probabilidad: representa la chance de que,
+# al realizar "n" pruebas independientes con probabilidad de detección "p",
+# ninguna de ellas detecte la enfermedad (es decir, todas fallen).
 
-prev_diseno <- 0.10
-confianza <- 0.95
+# n = ln(1 - NC) / ln(1 - p)
+# Fórmula para calcular el tamaño de muestra necesario (n):
+# NC = nivel de confianza deseado (probabilidad de detectar al menos un positivo)
+# p  = prevalencia o probabilidad de detección en una sola prueba
+# El resultado indica cuántas muestras se requieren para alcanzar la confianza NC
+# de detectar la enfermedad, bajo el supuesto de independencia entre pruebas.
+
+prev_diseno <- 0.10 # Prevalencia o probabilidad de detección
+confianza <- 0.95 # Nivel de Confianza deseado
 
 n_manual <- ceiling(
-  log(1 - confianza) /
-    log(1 - prev_diseno)
+  log(1 - confianza) /log(1 - prev_diseno)
 )
 
 n_manual
 # Resultado esperado: 29 individuos.
 
+
+# 02.1 Definimos una tamaño de muestra hipotético -----------------------------
+
 n_hipotetico <- 10
 
+# Calculamos la probabilidad de NO detectar la enfermedad
+# (1 - prev_diseno) es la probabilidad de que una sola muestra salga negativa
+# Elevado a n_hipotetico = probabilidad de que todas las muestras sean negativas
 prob_no_detectar <- (1 - prev_diseno)^n_hipotetico
+
+# Calculamos la probabilidad de detectar al menos un positivo
+# Es el complemento de la probabilidad de no detectar
 prob_detectar <- 1 - prob_no_detectar
 
-prob_no_detectar
-prob_detectar
-
+# Mostramos resultados
+prob_no_detectar   # Probabilidad de que ninguna muestra detecte la enfermedad
+prob_detectar      # Probabilidad de que al menos una muestra detecte la enfermedad
 
 # 03. Función reusable: prevalencia + sensibilidad -----------------------------
 
@@ -147,47 +164,112 @@ escenarios_resultados <- escenarios %>%
 escenarios_resultados
 
 
-# 05. Verificación con epiR ----------------------------------------------------
+# 05. Verificación con epiR -----------------------------------------------
 
-# A) Aproximación binomial: sin corrección por población finita.
-epi_sin_fpc <- epiR::epi.ssdetect(
-  N = 1000,
-  prev = 0.10,
-  se = 0.70,
-  sp = 1.00,
-  interpretation = "series",
-  covar = c(0, 0),
-  finite.correction = FALSE,
-  nfractional = FALSE,
-  conf.level = 0.95
+# Parámetros:
+# pstar = prevalencia mínima de diseño
+# se    = sensibilidad de la prueba
+# sp    = especificidad de la prueba
+# ss.se = probabilidad de detección deseada (Nivel de Confianza)
+
+pstar <- 0.10 # prevalencia mínima de diseño
+se    <- 0.70 # sensibilidad de la prueba
+sp    <- 1.00 # especificidad de la prueba
+NC    <- 0.95 # nivel de confianza deseado
+
+
+# A) Primero hacemos visible el razonamiento ------------------------------
+
+# Aproximación binomial:
+# probabilidad efectiva de detectar una unidad positiva = pstar * se
+
+n <- ceiling(
+  log(1 - NC) / log(1 - pstar * se)
 )
 
-epi_sin_fpc
+n
 
-# B) Misma pregunta, con corrección por población finita.
-epi_con_fpc <- epiR::epi.ssdetect(
-  N = 1000,
-  prev = 0.10,
-  se = 0.70,
-  sp = 1.00,
-  interpretation = "series",
-  covar = c(0, 0),
-  finite.correction = TRUE,
-  nfractional = FALSE,
-  conf.level = 0.95
+# Resultado:
+# 42
+
+
+# B) Verificación con epiR: aproximación binomial -------------------------
+
+# Al utilizar N = NA, epi.ssdetect() trabaja sin incorporar
+# un tamaño poblacional finito conocido.
+
+epi_binomial <- epiR::epi.ssdetect(
+  N = NA,                    # población infinita
+  pstar = pstar,             # prevalencia mínima de diseño
+  se = se,                   # sensibilidad de la prueba
+  sp = sp,                   # especificidad de la prueba
+  interpretation = "series", # interpretación de los resultados
+  covar = c(0, 0),           # covarianza entre sensibilidad y especificidad
+  nfractional = FALSE,       # si se permite un tamaño de muestra fraccionario
+  ss.se = NC                 # probabilidad de detección deseada (Nivel de Confianza)
 )
 
-epi_con_fpc
+epi_binomial
 
+# Tamaño de muestra:
+epi_binomial$sample.size
+
+
+# C) Verificación con epiR: población finita ------------------------------
+
+# Ahora indicamos que la población está formada por 1000 individuos.
+# epi.ssdetect() incorpora este tamaño poblacional en el cálculo.
+
+epi_finita <- epiR::epi.ssdetect(
+  N = 100,                   # tamaño poblacional finito
+  pstar = pstar,             # prevalencia mínima de diseño
+  se = se,                   # sensibilidad de la prueba
+  sp = sp,                   # especificidad de la prueba
+  interpretation = "series", # interpretación de los resultados
+  covar = c(0, 0),           # covarianza entre sensibilidad y especificidad
+  nfractional = FALSE,       # si se permite un tamaño de muestra fraccionario
+  ss.se = NC                 # probabilidad de detección deseada (Nivel de Confianza
+)
+
+epi_finita
+
+# Tamaño de muestra:
+epi_finita$sample.size
+
+# Interpretación --------------------------------------------------------
+
+# N = NA:
+# Se asume una población suficientemente grande o no especificada.
+# El cálculo se aproxima mediante el modelo binomial y, con pstar = 0.10,
+# Se = 0.70 y una probabilidad de detección deseada de 0.95,
+# se requieren aproximadamente 42 individuos.
+
+# N = 100:
+# Aquí sí se conoce el tamaño total de la población.
+# Al muestrear sin reemplazo una fracción importante de esos 100 individuos,
+# cada unidad adicional aporta relativamente más información.
+# Por ello, al incorporar la corrección por población finita,
+# el tamaño de muestra requerido disminuye respecto al caso N = NA.
+
+# Idea clave:
+# N = NA  -> población grande/no especificada -> aproximación binomial.
+# N = 100 -> población finita conocida        -> menor n requerido.
+ 
+# En términos prácticos:
+# cuando N = NA, calculamos cuántas muestras necesitamos como si la población
+# fuera muy grande. Cuando N = 100, sabemos que sólo existen 100 unidades y,
+# conforme muestreamos una proporción considerable de ellas, disminuye la
+# incertidumbre más rápidamente. Por eso el tamaño de muestra necesario puede
+# ser menor.
 
 # 06. Estimar prevalencia: precisión deseada ----------------------------------
 
 # presize::prec_prop() utiliza el ANCHO COMPLETO del intervalo de confianza.
 # Un margen de error de ±5 puntos porcentuales equivale a un ancho de 0.10.
 
-prev_esperada <- 0.10
-margen_error <- 0.05
-ancho_ic <- 2 * margen_error
+prev_esperada <- 0.10 # Prevalencia esperada
+margen_error <- 0.05  # Margen de error deseado (±5 puntos porcentuales)
+ancho_ic <- 2 * margen_error # Ancho total del intervalo de confianza
 
 precision_prev <- presize::prec_prop(
   p = prev_esperada,
@@ -215,6 +297,25 @@ precision_20 <- presize::prec_prop(
 precision_05
 precision_20
 
+# Interpretación ----------------------------------------------------------
+
+# El objetivo ahora no es detectar al menos un positivo, sino estimar una
+# prevalencia con una precisión previamente definida.
+
+# Con un IC del 95% y un ancho total deseado de 0.10 (±5 puntos porcentuales):
+
+# p = 0.05 -> n ≈ 82.92  -> se requieren 83 individuos.
+# p = 0.10 -> n ≈ 140.97 -> se requieren 141 individuos.
+# p = 0.20 -> n ≈ 244.15 -> se requieren 245 individuos.
+
+# A medida que la prevalencia esperada aumenta hacia 0.50, también aumenta
+# la variabilidad de una proporción y, por tanto, se necesita una muestra
+# mayor para mantener la misma precisión absoluta.
+
+# Idea clave:
+# detectar presencia y estimar prevalencia responden preguntas diferentes.
+# Para estimar prevalencia, n depende de la prevalencia esperada,
+# el nivel de confianza y la precisión deseada.
 
 # 07. Prevalencia aparente y prevalencia ajustada ------------------------------
 
@@ -244,6 +345,38 @@ prev_epi <- epiR::epi.prev(
 
 prev_epi
 
+# Interpretación ----------------------------------------------------------
+
+# La prevalencia aparente corresponde directamente a los resultados observados:
+# 18 positivos de 100 individuos -> 18%.
+
+# Al considerar que la prueba no es perfecta (Se = 0.90; Sp = 0.95),
+# epi.prev() ajusta la estimación por errores de clasificación.
+
+# Prevalencia aparente:
+# 18.0% (IC 95%: 11.7% - 26.7%)
+
+# Prevalencia verdadera ajustada:
+# 15.3% (IC 95%: 7.9% - 25.5%)
+
+# En este ejemplo, la prevalencia ajustada es menor que la aparente porque
+# parte de los resultados positivos pueden corresponder a falsos positivos
+# debido a que la especificidad es menor que 1.
+
+# epi.prev() estima aproximadamente:
+# 14 verdaderos positivos,
+# 4 falsos positivos,
+# 81 verdaderos negativos y
+# 1 falso negativo.
+
+# Idea clave:
+# prevalencia aparente = proporción observada de pruebas positivas.
+# prevalencia verdadera = estimación corregida por sensibilidad y especificidad
+
+# NOTA: aquí conviene remarcar algo importante: los 18 positivos son observados,
+# mientras que los valores de true.positive, false.positive, etc., son
+# estimaciones derivadas del desempeño diagnóstico de la prueba, 
+# no individuos cuya condición verdadera hayamos confirmado directamente.
 
 # 08. Comparar dos grupos: tamaño de muestra y potencia ------------------------
 
@@ -251,9 +384,24 @@ p1 <- 0.10
 p2 <- 0.20
 
 h <- pwr::ES.h(
-  p1 = p1,
-  p2 = p2
+  p1 = p1, # proporción del grupo 1
+  p2 = p2  # proporción del grupo 2
 )
+
+# El tamaño del efecto (h de Cohen) se calcula como:
+# h = 2*asin(sqrt(p1)) - 2*asin(sqrt(p2))
+#
+# Esta transformación expresa la diferencia entre ambas proporciones
+# en una escala estandarizada que utiliza pwr::pwr.2p.test().
+
+# # IMPORTANTE:
+# pwr::ES.h() no utiliza directamente la diferencia p1 - p2.
+# Primero transforma ambas proporciones mediante la función arcoseno-raíz.
+#
+# h = 2*asin(sqrt(p1)) - 2*asin(sqrt(p2))
+#
+# El resultado h representa el tamaño del efecto utilizado para
+# calcular la potencia y el tamaño de muestra al comparar dos proporciones.
 
 potencia_dos_proporciones <- pwr::pwr.2p.test(
   h = h,
@@ -271,6 +419,41 @@ n_por_grupo <- ceiling(
 
 n_por_grupo
 
+# Interpretación ----------------------------------------------------------
+
+# El objetivo ahora es comparar dos proporciones entre grupos independientes:
+# Grupo 1: p1 = 0.10 (10%)
+# Grupo 2: p2 = 0.20 (20%)
+
+# La diferencia que queremos ser capaces de detectar es de 10 puntos
+# porcentuales (0.20 - 0.10 = 0.10).
+
+# pwr::ES.h() transforma esta diferencia en un tamaño de efecto:
+# h ≈ -0.284.
+
+# Con una prueba bilateral, un nivel de significancia de 0.05
+# y una potencia estadística de 0.80, se requieren:
+
+# n ≈ 194.91 individuos por grupo
+# -> redondeando hacia arriba: 195 individuos por grupo.
+
+# Tamaño de muestra total:
+# 195 + 195 = 390 individuos.
+
+# Interpretación:
+# Si las prevalencias reales fueran 10% y 20%, respectivamente,
+# un estudio con 195 individuos por grupo tendría aproximadamente
+# 80% de probabilidad de detectar estadísticamente esa diferencia,
+# utilizando un alfa de α= 0.05 y una prueba bilateral.
+
+# Idea clave:
+# al comparar grupos, el tamaño de muestra depende de la magnitud
+# de la diferencia que queremos detectar, del nivel de significancia
+# y de la potencia estadística deseada.
+
+# Detectar presencia  -> probabilidad de detección.
+# Estimar prevalencia -> precisión del intervalo de confianza.
+# Comparar grupos     -> potencia para detectar una diferencia.
 
 # 09. "¿Cuántas?" no responde "¿cuáles?" --------------------------------------
 
@@ -308,9 +491,10 @@ marco_humedales
 
 set.seed(20260912)
 
-indicador_srs <- sampling::srswor(
-  n = 10,
-  N = nrow(marco_humedales)
+indicador_srs <- sampling::srswor( 
+  # simple random sampling without replacement
+  n = 10, # número de sitios a seleccionar
+  N = nrow(marco_humedales) # número total de sitios en el marco muestral
 )
 
 muestra_srs <- marco_humedales[indicador_srs == 1, ] %>%
@@ -328,6 +512,34 @@ muestra_srs %>%
     name = "sitios"
   )
 
+# Interpretación ----------------------------------------------------------
+
+# El marco muestral contiene 20 humedales distribuidos en tres estratos:
+# 8 sitios de bosque nublado,
+# 6 sitios de pino-encino y
+# 6 sitios de humedal abierto.
+
+# Se seleccionaron 10 sitios mediante muestreo aleatorio simple sin reemplazo
+# (SRSWOR). Por tanto, cada sitio tuvo la misma probabilidad de inclusión:
+
+# probabilidad de inclusión = n / N = 10 / 20 = 0.50
+
+# La muestra obtenida contiene:
+# 5 sitios de bosque nublado,
+# 3 sitios de pino-encino y
+# 2 sitios de humedal abierto.
+
+# Esta distribución NO fue impuesta por el diseño.
+# Es simplemente el resultado particular de una selección aleatoria simple.
+
+# Aunque el marco contiene información sobre hábitat, accesibilidad y
+# capacidad de muestreo, ninguna de estas variables influyó en la selección:
+# todos los sitios tuvieron la misma probabilidad de ser elegidos.
+
+# Idea clave:
+# en un muestreo aleatorio simple, la selección es probabilística y equitativa,
+# pero no garantiza que cada hábitat quede representado proporcionalmente
+# en una muestra concreta.
 
 # 09.2 Muestreo estratificado -------------------------------------------------
 
@@ -363,6 +575,42 @@ muestra_estratificada %>%
     name = "sitios"
   )
 
+# Interpretación ----------------------------------------------------------
+
+# La población se dividió previamente en tres estratos definidos por hábitat:
+# Estrato 1: bosque nublado   -> 8 sitios
+# Estrato 2: pino-encino      -> 6 sitios
+# Estrato 3: humedal abierto  -> 6 sitios
+
+# Se seleccionaron 10 sitios mediante muestreo aleatorio estratificado
+# sin reemplazo, asignando:
+# 4 sitios al bosque nublado,
+# 3 sitios al pino-encino y
+# 3 sitios al humedal abierto.
+
+# Esta asignación es proporcional al tamaño de cada estrato:
+# 8/20 = 40% -> 4 de 10
+# 6/20 = 30% -> 3 de 10
+# 6/20 = 30% -> 3 de 10
+
+# Dentro de cada estrato, los sitios fueron seleccionados aleatoriamente
+# mediante muestreo aleatorio simple sin reemplazo.
+
+# La probabilidad de inclusión es la misma en los tres estratos:
+# Estrato 1: 4/8 = 0.50
+# Estrato 2: 3/6 = 0.50
+# Estrato 3: 3/6 = 0.50
+
+# Por tanto, todos los sitios del marco tuvieron una probabilidad
+# de inclusión de 0.50.
+
+# A diferencia del muestreo aleatorio simple global, aquí la representación
+# de los tres hábitats está controlada por el diseño y no depende únicamente
+# del resultado aleatorio de una muestra particular.
+
+# Idea clave:
+# el muestreo estratificado garantiza representación de cada estrato
+# y mantiene la selección aleatoria dentro de ellos.
 
 # 10. Caso integrador: Bd, 20 humedales y 150 hisopos -------------------------
 
@@ -510,11 +758,12 @@ list.files(
 #   21, 3–14.
 #
 # Documentación de funciones:
-# ?epiR::epi.ssdetect
-# ?epiR::epi.prev
-# ?presize::prec_prop
-# ?sampling::srswor
-# ?sampling::strata
-# ?pwr::pwr.2p.test
+# ??epiR::epi.ssdetect
+# ??epiR::epi.prev
+# ??presize::prec_prop
+# ??sampling::srswor
+# ??sampling::strata
+# ??pwr::Es.h
+# ??pwr::pwr.2p.test
 
 # Fin --------------------------------------------------------------------------
