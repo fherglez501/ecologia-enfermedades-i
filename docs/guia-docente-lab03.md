@@ -94,9 +94,12 @@ Este escenario es especialmente útil para mostrar que pocas recapturas producen
 
 ## Decisiones metodológicas del script
 
-- Si `R = 0`, la función detiene el cálculo porque Lincoln–Petersen no es calculable.
+- Si `R = 0`, LP no está definido. Aunque la expresión de Chapman produzca una cifra finita, esta función detiene el procedimiento normal y solicita revisar el diseño.
 - Si `R > min(M, C)`, la función identifica un escenario imposible.
-- El límite inferior del IC aproximado se trunca en cero porque una abundancia negativa carece de interpretación biológica.
+- El IC normal se conserva sin recortar. Si su límite inferior cae por debajo de `U = M + C - R`, el script advierte una incompatibilidad con el mínimo observado. Recortar un límite no garantiza una cobertura del 95 %.
+- La función rechaza vectores, texto, valores no finitos, fracciones y niveles de confianza inválidos.
+- `R < 10` activa una alerta docente, no un umbral universal de validez. Una varianza nula activa una alerta de frontera.
+- La función reside en `scripts/03a_funcion-lincoln-petersen.R` y puede ejecutarse con R base. Las comprobaciones reproducibles están en `tests/test-lab03.R`.
 - El IC implementado es una aproximación normal basada en la varianza de Chapman; debe explicarse como una aproximación didáctica, no como un procedimiento universal para todo diseño de captura–recaptura.
 
 ## Transición presentación → script
@@ -129,3 +132,27 @@ El estudiante deberá conservar:
 ## Conexión con la sesión teórica
 
 Este laboratorio da continuidad al diseño de muestreo trabajado el 10/09/2026. Permite mostrar que la estimación de abundancia no depende solo de una fórmula: la calidad de la inferencia depende del diseño de captura, la representatividad, la detectabilidad y el cumplimiento de los supuestos del modelo.
+
+
+## Instrucciones para el estudiante
+
+Trabajo individual. Abra el proyecto y ejecute `scripts/03_lab-lincoln-petersen.R` por secciones. Los datos son sintéticos, con nombres de hábitats como contexto didáctico. Compare el escenario A con las diapositivas y resuelva uno de B, C o D.
+
+Elabore una conclusión de 150–200 palabras que delimite población, periodo, estimador, incertidumbre y dos supuestos vulnerables. Entregue el script comentado, los CSV, la figura y la conclusión en una carpeta identificada con su nombre.
+
+### Criterios de revisión propuestos
+
+| Criterio | Evidencia esperada |
+|---|---|
+| Cálculo | LP, Chapman, varianza, EE e IC coinciden con el cálculo independiente. |
+| Reproducibilidad | Rutas relativas, entradas identificadas y salidas exportadas. |
+| Diagnóstico | Distingue una entrada imposible de un caso con poca información. |
+| Interpretación | Explica el IC como incertidumbre de muestreo y justifica dos supuestos. |
+
+### Comprobación rápida con R base
+
+Desde la raíz del proyecto: `source("tests/test-lab03.R")`. Este archivo comprueba el ejemplo publicado de ballenas, valores de referencia y casos inválidos, sin instalar paquetes del curso.
+
+### Lectura de apoyo
+
+Mills, L. S. (2013). *Conservation of wildlife populations: Demography, genetics, and management* (2.ª ed.). Wiley-Blackwell. Capítulo 2, pp. 14–32; capítulo 4, pp. 54–64, ecuaciones 4.7–4.10 y recuadro 4.4.
