@@ -22,7 +22,8 @@
 #
 # El script maestro instala/actualiza y carga las dependencias del curso.
 
-source(here::here("scripts", "00_library.R"))
+source(file.path("scripts", "00_library.R"))
+source(here::here("scripts", "03a_funcion-lincoln-petersen.R"))
 
 
 # 01. Cargar escenarios --------------------------------------------------------
@@ -36,6 +37,7 @@ if (!file.exists(ruta_datos)) {
   stop("No se encontro el archivo de datos del Laboratorio 3.")
 }
 
+# Datos sinteticos para docencia: los sitios no representan muestreos reales.
 escenarios <- read_csv(
   ruta_datos,
   show_col_types = FALSE
@@ -113,10 +115,8 @@ se_chapman_manual <- sqrt(var_chapman_manual)
 # Intervalo normal aproximado del 95 %
 z_95 <- qnorm(0.975)
 
-ic_inf_manual <- max(
-  0,
-  N_chapman_manual - z_95 * se_chapman_manual
-)
+ic_inf_manual <- N_chapman_manual - z_95 * se_chapman_manual
+# Conservar el intervalo calculado; si baja de U = M + C - R, revisar el metodo.
 
 ic_sup_manual <- N_chapman_manual + z_95 * se_chapman_manual
 
@@ -130,71 +130,14 @@ c(
 
 # 06. Construir una funcion parametrizada -------------------------------------
 
-estimador_lp <- function(M, C, R, conf_level = 0.95) {
+# La funcion completa esta en scripts/03a_funcion-lincoln-petersen.R.
+# Abrala, lea sus validaciones y ejecutela paso a paso.
+# Usa R base y devuelve LP, Chapman, varianza, SE, IC, U y alertas.
+# conf_level controla el nivel de confianza. El IC no se recorta.
+# R < 10 activa una alerta didactica, no una regla universal de validez.
+# R = 0 detiene este procedimiento normal, aunque Chapman sea finito.
 
-  # Validaciones de entrada ----------------------------------------------------
-  if (any(is.na(c(M, C, R)))) {
-    stop("M, C y R no pueden contener NA.")
-  }
-
-  if (any(c(M, C, R) < 0)) {
-    stop("M, C y R deben ser valores no negativos.")
-  }
-
-  if (M == 0 || C == 0) {
-    stop("M y C deben ser mayores que cero.")
-  }
-
-  if (R == 0) {
-    stop(
-      paste0(
-        "R = 0: el estimador Lincoln-Petersen no es calculable. ",
-        "La ausencia de recapturas implica informacion insuficiente bajo este modelo."
-      )
-    )
-  }
-
-  if (R > min(M, C)) {
-    stop("R no puede ser mayor que M ni que C.")
-  }
-
-  if (conf_level <= 0 || conf_level >= 1) {
-    stop("conf_level debe estar entre 0 y 1.")
-  }
-
-  # Estimadores ---------------------------------------------------------------
-  N_lp <- (M * C) / R
-
-  N_chapman <- ((M + 1) * (C + 1) / (R + 1)) - 1
-
-  # Incertidumbre -------------------------------------------------------------
-  var_chapman <- (
-    (M + 1) * (C + 1) * (M - R) * (C - R)
-  ) / (
-    ((R + 1)^2) * (R + 2)
-  )
-
-  se_chapman <- sqrt(var_chapman)
-
-  alpha <- 1 - conf_level
-  z <- qnorm(1 - alpha / 2)
-
-  ic_inf <- max(0, N_chapman - z * se_chapman)
-  ic_sup <- N_chapman + z * se_chapman
-
-  tibble(
-    M = M,
-    C = C,
-    R = R,
-    N_LP = N_lp,
-    N_Chapman = N_chapman,
-    var_Chapman = var_chapman,
-    SE_Chapman = se_chapman,
-    IC_inf = ic_inf,
-    IC_sup = ic_sup,
-    conf_level = conf_level
-  )
-}
+estimador_lp
 
 
 # 07. Validar la funcion con el calculo manual --------------------------------
@@ -210,7 +153,11 @@ resultado_A
 # La salida debe coincidir con los calculos realizados manualmente.
 stopifnot(
   isTRUE(all.equal(resultado_A$N_LP, N_lp_manual)),
-  isTRUE(all.equal(resultado_A$N_Chapman, N_chapman_manual))
+  isTRUE(all.equal(resultado_A$N_Chapman, N_chapman_manual)),
+  isTRUE(all.equal(resultado_A$var_Chapman, var_chapman_manual)),
+  isTRUE(all.equal(resultado_A$SE_Chapman, se_chapman_manual)),
+  isTRUE(all.equal(resultado_A$IC_inf, ic_inf_manual)),
+  isTRUE(all.equal(resultado_A$IC_sup, ic_sup_manual))
 )
 
 cat("\nValidacion correcta: funcion y calculo manual coinciden.\n")
@@ -247,10 +194,12 @@ comparacion <- resultados %>%
     M,
     C,
     R,
+    U,
     N_LP,
     N_Chapman,
     IC_inf,
-    IC_sup
+    IC_sup,
+    alerta
   ) %>%
   mutate(
     diferencia = N_LP - N_Chapman,
@@ -331,6 +280,12 @@ supuestos
 
 # estimador_lp(M = 50, C = 60, R = 0)
 # estimador_lp(M = 20, C = 15, R = 18)
+# estimador_lp(M = 50.5, C = 60, R = 15)
+# estimador_lp(M = Inf, C = 60, R = 15)
+# estimador_lp(M = c(50, 60), C = 60, R = 15)
+# estimador_lp(M = 50, C = 60, R = 1)
+# El ultimo caso conserva un IC inferior a U y genera alertas.
+# Comprobacion independiente (solo R base): source("tests/test-lab03.R")
 
 
 # 14. Actividad del estudiante -------------------------------------------------
@@ -404,3 +359,4 @@ cat("Se generaron estimaciones, IC, tabla de supuestos y figura.\n\n")
 # 6. ¿Por que una estimacion numericamente correcta puede ser biologicamente invalida?
 
 # Fin -------------------------------------------------------------------------
+
